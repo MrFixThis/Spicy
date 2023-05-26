@@ -1,7 +1,6 @@
-use std::{env, time::Duration};
 use anyhow::anyhow;
-use entity::sea_orm::{ConnectOptions, Database, DatabaseConnection};
-use migration::{Migrator, MigratorTrait};
+use service::sea_orm::{ConnectOptions, Database, DatabaseConnection};
+use std::{env, time::Duration};
 
 /// Establishes the connection to the data source and runs the initial
 /// migration on startup.
@@ -15,7 +14,5 @@ pub async fn setup_conn() -> anyhow::Result<DatabaseConnection> {
         .max_lifetime(Duration::from_secs(5))
         .sqlx_logging(false);
 
-    let db = Database::connect(opt).await.map_err(|e| anyhow!(e))?;
-    Migrator::up(&db, None).await.map_err(|e| anyhow!(e))?;
-    Ok(db)
+    Database::connect(opt).await.map_err(|e| anyhow!(e))
 }

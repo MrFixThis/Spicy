@@ -1,7 +1,15 @@
-# ILetter Library
+# Spicy
 
-ILetter is the concept of a web library system built with
-[The Rust Programming Language](https://www.rust-lang.org/)... Yeah
+Spicy is a simple web application meant to discover, share, and save cooking
+recipes.
+
+#### Tech Stack
+- [Rust Programming Language](https://www.rust-lang.org/) (Backend)
+- [React](https://react.dev/) (Fronted)
+- [MariaDB](https://mariadb.org/)
+
+#### Tools
+- [Docker](https://www.docker.com/)
 
 #### TODOS
-- Build a better README while the project grows.
+- Improve the README file.
