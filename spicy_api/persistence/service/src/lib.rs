@@ -42,7 +42,6 @@ where
     async fn create(db: &DbConn, from_mod: E::Model) -> anyhow::Result<A> {
         from_mod
             .into_active_model()
-            .reset_all()
             .save(db)
             .await
             .map_err(anyhow::Error::msg)
@@ -51,11 +50,11 @@ where
     async fn update_by(
         db: &DbConn,
         col: E::Column,
-        val: Value,
+        col_val: Value,
         from_mod: E::Model,
     ) -> Result<A, DbErr> {
         let mut ent = from_mod.into_active_model();
-        ent.set(col, val);
+        ent.set(col, col_val);
         ent.reset_all().save(db).await
     }
 
@@ -71,7 +70,7 @@ where
 pub struct RelationService;
 
 impl RelationService {
-    pub async fn load_one<E, F, S>(db: &DbConn, other: S) -> anyhow::Result<Vec<Option<F::Model>>>
+    pub async fn load_one<E, F, S>(db: &DbConn, target: S) -> anyhow::Result<Vec<Option<F::Model>>>
     where
         F: EntityTrait,
         F::Model: Send + Sync,
@@ -82,12 +81,12 @@ impl RelationService {
         E::find()
             .all(db)
             .await?
-            .load_one(other, db)
+            .load_one(target, db)
             .await
             .map_err(anyhow::Error::msg)
     }
 
-    pub async fn load_many<E, F, S>(db: &DbConn, other: S) -> anyhow::Result<Vec<Vec<F::Model>>>
+    pub async fn load_many<E, F, S>(db: &DbConn, target: S) -> anyhow::Result<Vec<Vec<F::Model>>>
     where
         F: EntityTrait,
         F::Model: Send + Sync,
@@ -98,7 +97,7 @@ impl RelationService {
         E::find()
             .all(db)
             .await?
-            .load_many(other, db)
+            .load_many(target, db)
             .await
             .map_err(anyhow::Error::msg)
     }

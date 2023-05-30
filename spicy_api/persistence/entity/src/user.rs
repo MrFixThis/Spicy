@@ -1,6 +1,12 @@
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct UserPayload {
+    pub email: String,
+    pub password: String,
+}
+
 #[derive(Debug, Clone, Copy, Default, DeriveEntity)]
 #[sea_orm(table_name = "user")]
 pub struct Entity;
@@ -52,6 +58,7 @@ pub struct Model {
     #[serde(skip_deserializing)]
     pub id: i32,
     pub email: String,
+    #[serde(skip_serializing)]
     pub password: String,
     pub name: String,
     pub surname: String,

@@ -17,13 +17,13 @@ features = [
     "debug-print"
 ]
 
-[dev-dependencies.tokio]
-version = "1.28.1"
-features = ["macros", "rt"]
+[dev-dependencies]
+tokio = { version = "1.28.1", features = ["macros", "rt"] }
+pretty_assertions = "1.3.0"
 
 [features]
 mock = ["sea-orm/mock"]
 
-# [[test]]
-# name = ""
-# required-features = ["mock"]
+[[test]]
+name = "user_entity_test"
+required-features = ["mock"]
