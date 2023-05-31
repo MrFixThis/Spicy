@@ -1,6 +1,7 @@
 use sea_orm::entity::prelude::*;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel)]
+#[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, Serialize, Deserialize)]
 #[sea_orm(table_name = "user_role")]
 pub struct Model {
     #[sea_orm(primary_key)]

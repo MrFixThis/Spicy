@@ -47,15 +47,19 @@ where
             .map_err(anyhow::Error::msg)
     }
 
-    async fn update_by(
+    async fn update_by<V>(
         db: &DbConn,
         col: E::Column,
-        col_val: Value,
+        col_val: V,
         from_mod: E::Model,
-    ) -> Result<A, DbErr> {
+    ) -> anyhow::Result<A>
+    where
+        V: Into<Value> + Send
+    {
         let mut ent = from_mod.into_active_model();
-        ent.set(col, col_val);
-        ent.reset_all().save(db).await
+
+        ent.set(col, col_val.into());
+        ent.reset_all().save(db).await.map_err(anyhow::Error::msg)
     }
 
     async fn delete_by_pk(db: &DbConn, pk: Pk) -> anyhow::Result<DeleteResult> {
@@ -63,6 +67,10 @@ where
             .exec(db)
             .await
             .map_err(anyhow::Error::msg)
+    }
+
+    async fn delete_all(db: &DbConn) -> anyhow::Result<DeleteResult> {
+        E::delete_many().exec(db).await.map_err(anyhow::Error::msg)
     }
 }
 

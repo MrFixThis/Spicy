@@ -12,7 +12,6 @@ anyhow.workspace = true
 dotenvy = "0.15.7"
 listenfd = "1.0.1"
 config = { version = "0.13.3", features = ["yaml"] }
-
 # Path deps
 entity = { path = "persistence/entity" }
 service = { path = "persistence/service" }

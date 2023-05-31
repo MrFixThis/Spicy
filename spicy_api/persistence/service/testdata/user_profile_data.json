@@ -1,0 +1,44 @@
+[
+    {
+        "id": 1,
+        "user_id": 1,
+        "phone_number": "9817453026",
+        "birth_date": "1990-01-01",
+        "bio": "I love cooking and experimenting with new recipes."
+    },
+    {
+        "id": 2,
+        "user_id": 2,
+        "phone_number": "5128739640",
+        "birth_date": "1995-02-15",
+        "bio": "Food enthusiast and aspiring chef."
+    },
+    {
+        "id": 3,
+        "user_id": 3,
+        "phone_number": "6394872150",
+        "birth_date": "1988-07-10",
+        "bio": "Passionate about creating delicious meals."
+    },
+    {
+        "id": 4,
+        "user_id": 4,
+        "phone_number": "2375069814",
+        "birth_date": "1992-04-30",
+        "bio": "Cooking is my therapy."
+    },
+    {
+        "id": 5,
+        "user_id": 5,
+        "phone_number": "8791462035",
+        "birth_date": "1998-09-22",
+        "bio": "Food lover and adventurer."
+    },
+    {
+        "id": 6,
+        "user_id": 6,
+        "phone_number": "8789462351",
+        "birth_date": "1998-09-22",
+        "bio": "Chocodelate! </>"
+    }
+]

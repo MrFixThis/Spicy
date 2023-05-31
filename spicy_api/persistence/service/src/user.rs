@@ -1,6 +1,6 @@
 use crate::{pk_ty, MutationRepository, QueryRepository};
 use ::entity::{prelude::User, user};
-use sea_orm::{ColumnTrait, DbConn, EntityTrait, QueryFilter, QueryOrder, Condition};
+use sea_orm::{ColumnTrait, Condition, DbConn, EntityTrait, QueryFilter, QueryOrder};
 
 #[derive(Debug)]
 pub struct UserService;
@@ -17,13 +17,16 @@ impl QueryRepository<User, PrimaryKey> for UserService {
     }
 }
 
+#[async_trait::async_trait]
+impl MutationRepository<User, user::ActiveModel, PrimaryKey> for UserService {}
+
 impl UserService {
     pub async fn find_for_login(db: &DbConn, email: &str) -> anyhow::Result<Option<user::Model>> {
         User::find()
             .filter(
                 Condition::all()
                     .add(user::Column::Email.eq(email))
-                    .add(user::Column::IsActive.eq(true))
+                    .add(user::Column::IsActive.eq(true)),
             )
             .one(db)
             .await
@@ -39,6 +42,3 @@ impl UserService {
             .map_err(anyhow::Error::msg)
     }
 }
-
-#[async_trait::async_trait]
-impl MutationRepository<User, user::ActiveModel, PrimaryKey> for UserService {}

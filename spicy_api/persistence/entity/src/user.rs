@@ -55,7 +55,7 @@ impl ColumnTrait for Column {
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveModel, DeriveActiveModel, Serialize, Deserialize)]
 pub struct Model {
-    #[serde(skip_deserializing)]
+    #[serde(default)]
     pub id: i32,
     pub email: String,
     #[serde(skip_serializing)]

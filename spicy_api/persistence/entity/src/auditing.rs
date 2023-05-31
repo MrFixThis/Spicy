@@ -1,7 +1,7 @@
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, Serialize, Deserialize)]
 #[sea_orm(table_name = "auditing")]
 pub struct Model {
     #[sea_orm(primary_key)]
@@ -10,17 +10,17 @@ pub struct Model {
     pub table_name: String,
     pub operation_kind: OperationKind,
     pub user_id: i32,
-    pub timestamp: DateTimeLocal,
+    pub timestamp: DateTimeUtc,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)]
 #[sea_orm(rs_type = "String", db_type = "Enum")]
 pub enum OperationKind {
-    #[sea_orm(string_value = "CREATE")]
+    #[sea_orm(string_value = "Create")]
     Create,
-    #[sea_orm(string_value = "UPDATE")]
+    #[sea_orm(string_value = "Update")]
     Update,
-    #[sea_orm(string_value = "DELETE")]
+    #[sea_orm(string_value = "Delete")]
     Delete,
 }
 

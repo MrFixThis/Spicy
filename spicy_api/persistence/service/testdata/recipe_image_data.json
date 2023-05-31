@@ -1,0 +1,44 @@
+[
+    {
+        "id": 1,
+        "name": "image1",
+        "extension": "jpg",
+        "path": "/path/to/image1.jpg",
+        "recipe_id": 1
+    },
+    {
+        "id": 2,
+        "name": "image2",
+        "extension": "png",
+        "path": "/path/to/image2.png",
+        "recipe_id": 2
+    },
+    {
+        "id": 3,
+        "name": "image3",
+        "extension": "jpeg",
+        "path": "/path/to/image3.jpeg",
+        "recipe_id": 3
+    },
+    {
+        "id": 4,
+        "name": "image4",
+        "extension": "jpg",
+        "path": "/path/to/image4.jpg",
+        "recipe_id": 4
+    },
+    {
+        "id": 5,
+        "name": "image5",
+        "extension": "png",
+        "path": "/path/to/image5.png",
+        "recipe_id": 5
+    },
+    {
+        "id": 6,
+        "name": "image6",
+        "extension": "png",
+        "path": "/path/to/image6.png",
+        "recipe_id": 6
+    }
+]
