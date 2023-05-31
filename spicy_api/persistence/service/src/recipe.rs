@@ -1,5 +1,5 @@
 use entity::{prelude::Recipe, recipe};
-use sea_orm::{ColumnTrait, DbConn, DeleteResult, EntityTrait, QueryFilter, QueryOrder};
+use sea_orm::{DbConn, EntityTrait, QueryOrder};
 
 use crate::{pk_ty, MutationRepository, QueryRepository};
 
@@ -21,21 +21,4 @@ impl QueryRepository<Recipe, PrimaryKey> for RecipeService {
 #[async_trait::async_trait]
 impl MutationRepository<Recipe, recipe::ActiveModel, PrimaryKey> for RecipeService {}
 
-impl RecipeService {
-    pub async fn find_all_not_visible(db: &DbConn) -> anyhow::Result<Vec<recipe::Model>> {
-        Recipe::find()
-            .filter(recipe::Column::IsVisible.eq(false))
-            .order_by_asc(recipe::Column::DateCreated)
-            .all(db)
-            .await
-            .map_err(anyhow::Error::msg)
-    }
-
-    pub async fn delete_all_not_visible(db: &DbConn) -> anyhow::Result<DeleteResult> {
-        Recipe::delete_many()
-            .filter(recipe::Column::IsVisible.eq(false))
-            .exec(db)
-            .await
-            .map_err(anyhow::Error::msg)
-    }
-}
+impl RecipeService {}

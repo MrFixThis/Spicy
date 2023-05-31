@@ -1,61 +1,126 @@
 [
-    {
-        "id": 1,
-        "title": "Pasta Carbonara",
-        "date_created": "2023-01-01",
-        "description": "Classic Italian pasta dish",
-        "preparation_steps": "1. Cook pasta. 2. Fry bacon. 3. Beat eggs and mix with cheese. 4. Combine pasta, bacon, and egg mixture. 5. Serve hot.",
-        "cooking_time": "00:30:00",
-        "is_visible": true,
-        "user_id": 1
-    },
-    {
-        "id": 2,
-        "title": "Chicken Curry",
-        "date_created": "2023-01-02",
-        "description": "Spicy and flavorful chicken curry",
-        "preparation_steps": "1. Heat oil and sauté onions. 2. Add spices and chicken. 3. Cook until chicken is done. 4. Garnish with cilantro. 5. Serve with rice.",
-        "cooking_time": "01:00:00",
-        "is_visible": false,
-        "user_id": 2
-    },
-    {
-        "id": 3,
-        "title": "Chocolate Brownies",
-        "date_created": "2023-01-03",
-        "description": "Rich and fudgy chocolate brownies",
-        "preparation_steps": "1. Melt butter and chocolate. 2. Mix in sugar and eggs. 3. Add flour and mix well. 4. Bake in preheated oven. 5. Let cool and cut into squares.",
-        "cooking_time": "00:45:00",
-        "is_visible": true,
-        "user_id": 3
-    },
-    {
-        "id": 4,
-        "title": "Greek Salad",
-        "date_created": "2023-01-04",
-        "description": "Refreshing and healthy salad",
-        "preparation_steps": "1. Chop tomatoes, cucumbers, and onions. 2. Add olives and feta cheese. 3. Drizzle with olive oil and lemon juice. 4. Season with salt and pepper. 5. Toss and serve.",
-        "cooking_time": "00:15:00",
-        "is_visible": true,
-        "user_id": 4
-    },
-    {
-        "id": 5,
-        "title": "Beef Stir-Fry",
-        "date_created": "2023-01-05",
-        "description": "Quick and delicious beef stir-fry",
-        "preparation_steps": "1. Marinate beef in soy sauce and ginger. 2. Heat oil and stir-fry beef. 3. Add vegetables and cook until tender. 4. Season with salt and pepper. 5. Serve with rice or noodles.",
-        "cooking_time": "00:25:00",
-        "is_visible": false,
-        "user_id": 5
-    },
-    {
-        "title": "Chicken Tikka Masala",
-        "date_created": "2023-02-15",
-        "description": "Spicy and creamy Indian chicken curry",
-        "preparation_steps": "1. Marinate chicken with yogurt and spices. 2. Grill or cook chicken until done. 3. Prepare the tomato-based sauce. 4. Add cooked chicken to the sauce. 5. Simmer for a few minutes. 6. Serve with rice or naan bread.",
-        "cooking_time": "01:15:00",
-        "is_visible": true,
-        "user_id": 6
-    }
+    [
+        {
+            "id": 1,
+            "title": "Pasta Carbonara",
+            "date_created": "2023-01-01",
+            "description": "Classic Italian pasta dish",
+            "preparation_steps": "1. Cook pasta. 2. Fry bacon. 3. Beat eggs and mix with cheese. 4. Combine pasta, bacon, and egg mixture. 5. Serve hot.",
+            "cooking_time": "00:30:00",
+            "is_visible": true,
+            "user_id": 1
+        }
+    ],
+    [
+        {
+            "id": 2,
+            "title": "Chicken Curry",
+            "date_created": "2023-01-02",
+            "description": "Spicy and flavorful chicken curry",
+            "preparation_steps": "1. Heat oil and sauté onions. 2. Add spices and chicken. 3. Cook until chicken is done. 4. Garnish with cilantro. 5. Serve with rice.",
+            "cooking_time": "01:00:00",
+            "is_visible": false,
+            "user_id": 2
+        }
+    ],
+    [
+        {
+            "id": 2,
+            "title": "Chicken Curry",
+            "date_created": "2023-01-02",
+            "description": "Spicy and flavorful chicken curry",
+            "preparation_steps": "1. Heat oil and sauté onions. 2. Add spices and chicken. 3. Cook until chicken is done. 4. Garnish with cilantro. 5. Serve with rice.",
+            "cooking_time": "01:00:00",
+            "is_visible": false,
+            "user_id": 2
+        },
+        {
+            "id": 3,
+            "title": "Chocolate Brownies",
+            "date_created": "2023-01-03",
+            "description": "Rich and fudgy chocolate brownies",
+            "preparation_steps": "1. Melt butter and chocolate. 2. Mix in sugar and eggs. 3. Add flour and mix well. 4. Bake in preheated oven. 5. Let cool and cut into squares.",
+            "cooking_time": "00:45:00",
+            "is_visible": true,
+            "user_id": 3
+        }
+    ],
+    [
+        {
+            "id": 3,
+            "title": "Chocolate Brownies",
+            "date_created": "2023-01-03",
+            "description": "Rich and fudgy chocolate brownies",
+            "preparation_steps": "1. Melt butter and chocolate. 2. Mix in sugar and eggs. 3. Add flour and mix well. 4. Bake in preheated oven. 5. Let cool and cut into squares.",
+            "cooking_time": "00:45:00",
+            "is_visible": false,
+            "user_id": 3
+        }
+    ],
+    [
+        {
+            "id": 3,
+            "title": "Chocolate Brownies with Nuts",
+            "date_created": "2023-01-03",
+            "description": "Rich and fudgy chocolate brownies nuts",
+            "preparation_steps": "1. Melt butter and chocolate. 2. Mix in sugar and eggs. 3. Add flour and nut, then mix well. 4. Bake in preheated oven. 5. Let cool and cut into squares.",
+            "cooking_time": "00:45:00",
+            "is_visible": true,
+            "user_id": 3
+        }
+    ],
+    [
+        {
+            "id": 4,
+            "title": "Greek Salad",
+            "date_created": "2023-01-04",
+            "description": "Refreshing and healthy salad",
+            "preparation_steps": "1. Chop tomatoes, cucumbers, and onions. 2. Add olives and feta cheese. 3. Drizzle with olive oil and lemon juice. 4. Season with salt and pepper. 5. Toss and serve.",
+            "cooking_time": "00:15:00",
+            "is_visible": true,
+            "user_id": 4
+        }
+    ],
+    [
+        {
+            "id": 5,
+            "title": "Beef Stir-Fry",
+            "date_created": "2023-01-05",
+            "description": "Quick and delicious beef stir-fry",
+            "preparation_steps": "1. Marinate beef in soy sauce and ginger. 2. Heat oil and stir-fry beef. 3. Add vegetables and cook until tender. 4. Season with salt and pepper. 5. Serve with rice or noodles.",
+            "cooking_time": "00:25:00",
+            "is_visible": false,
+            "user_id": 5
+        },
+        {
+            "title": "Chicken Tikka Masala",
+            "date_created": "2023-02-15",
+            "description": "Spicy and creamy Indian chicken curry",
+            "preparation_steps": "1. Marinate chicken with yogurt and spices. 2. Grill or cook chicken until done. 3. Prepare the tomato-based sauce. 4. Add cooked chicken to the sauce. 5. Simmer for a few minutes. 6. Serve with rice or naan bread.",
+            "cooking_time": "01:15:00",
+            "is_visible": true,
+            "user_id": 6
+        }
+    ],
+    [
+        {
+            "id": 5,
+            "title": "Beef Stir-Fry",
+            "date_created": "2023-01-05",
+            "description": "Quick and delicious beef stir-fry",
+            "preparation_steps": "1. Marinate beef in soy sauce and ginger. 2. Heat oil and stir-fry beef. 3. Add vegetables and cook until tender. 4. Season with salt and pepper. 5. Serve with rice or noodles.",
+            "cooking_time": "00:25:00",
+            "is_visible": false,
+            "user_id": 5
+        },
+        {
+            "title": "Chicken Tikka Masala",
+            "date_created": "2023-02-15",
+            "description": "Spicy and creamy Indian chicken curry",
+            "preparation_steps": "1. Marinate chicken with yogurt and spices. 2. Grill or cook chicken until done. 3. Prepare the tomato-based sauce. 4. Add cooked chicken to the sauce. 5. Simmer for a few minutes. 6. Serve with rice or naan bread.",
+            "cooking_time": "01:15:00",
+            "is_visible": true,
+            "user_id": 6
+        }
+    ]
 ]

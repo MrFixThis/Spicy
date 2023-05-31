@@ -12,7 +12,7 @@ pub use recipe::RecipeService;
 pub use recipe_image::ImageRecipeService;
 pub use role::RoleService;
 pub use sea_orm;
-use sea_orm::*;
+use sea_orm::{sea_query::IntoCondition, *};
 pub use user::UserService;
 pub use user_profile::UserProfileService;
 
@@ -28,6 +28,17 @@ where
 
     async fn find_all(db: &DbConn) -> anyhow::Result<Vec<E::Model>> {
         E::find().all(db).await.map_err(anyhow::Error::msg)
+    }
+
+    async fn find_all_by<F>(db: &DbConn, expr: F) -> anyhow::Result<Vec<E::Model>>
+    where
+        F: IntoCondition + Send,
+    {
+        E::find()
+            .filter(expr)
+            .all(db)
+            .await
+            .map_err(anyhow::Error::msg)
     }
 }
 
@@ -54,7 +65,7 @@ where
         from_mod: E::Model,
     ) -> anyhow::Result<A>
     where
-        V: Into<Value> + Send
+        V: Into<Value> + Send,
     {
         let mut ent = from_mod.into_active_model();
 
@@ -72,45 +83,69 @@ where
     async fn delete_all(db: &DbConn) -> anyhow::Result<DeleteResult> {
         E::delete_many().exec(db).await.map_err(anyhow::Error::msg)
     }
+
+    async fn delete_all_by<F>(db: &DbConn, expr: F) -> anyhow::Result<DeleteResult>
+    where
+        F: IntoCondition + Send,
+    {
+        E::delete_many()
+            .filter(expr)
+            .exec(db)
+            .await
+            .map_err(anyhow::Error::msg)
+    }
 }
 
 #[derive(Debug)]
 pub struct RelationService;
 
 impl RelationService {
-    pub async fn load_one<E, F, S>(db: &DbConn, target: S) -> anyhow::Result<Vec<Option<F::Model>>>
+    pub async fn load_one_by_pk<F, E, Pk, S>(
+        db: &DbConn,
+        target: S,
+        pk: Pk,
+    ) -> anyhow::Result<Option<F::Model>>
     where
         F: EntityTrait,
         F::Model: Send + Sync,
         E: EntityTrait + Related<F>,
         E::Model: Send + Sync,
         S: EntityOrSelect<F>,
+        Pk: Into<<E::PrimaryKey as PrimaryKeyTrait>::ValueType> + Send + 'static,
     {
-        E::find()
+        E::find_by_id(pk)
             .all(db)
             .await?
             .load_one(target, db)
             .await
+            .map(|mut e| e.pop())
+            .map(Option::flatten)
             .map_err(anyhow::Error::msg)
     }
 
-    pub async fn load_many<E, F, S>(db: &DbConn, target: S) -> anyhow::Result<Vec<Vec<F::Model>>>
+    pub async fn load_many_by_pk<F, E, Pk, S>(
+        db: &DbConn,
+        target: S,
+        pk: Pk,
+    ) -> anyhow::Result<Vec<F::Model>>
     where
         F: EntityTrait,
         F::Model: Send + Sync,
         E: EntityTrait + Related<F>,
         E::Model: Send + Sync,
         S: EntityOrSelect<F>,
+        Pk: Into<<E::PrimaryKey as PrimaryKeyTrait>::ValueType> + Send + 'static,
     {
-        E::find()
+        E::find_by_id(pk)
             .all(db)
             .await?
             .load_many(target, db)
             .await
+            .map(|e| e.into_iter().flatten().collect())
             .map_err(anyhow::Error::msg)
     }
 
-    pub async fn load_many_to_many<E, F, V, S>(
+    pub async fn load_many_to_many<F, V, E, S>(
         db: &DbConn,
         other: S,
         via: V,

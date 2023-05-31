@@ -21,7 +21,9 @@ impl QueryRepository<User, PrimaryKey> for UserService {
 impl MutationRepository<User, user::ActiveModel, PrimaryKey> for UserService {}
 
 impl UserService {
-    pub async fn find_for_login(db: &DbConn, email: &str) -> anyhow::Result<Option<user::Model>> {
+    pub async fn find_for_login(
+        db: &DbConn, email: &str
+    ) -> anyhow::Result<Option<user::Model>> {
         User::find()
             .filter(
                 Condition::all()
@@ -29,15 +31,6 @@ impl UserService {
                     .add(user::Column::IsActive.eq(true)),
             )
             .one(db)
-            .await
-            .map_err(anyhow::Error::msg)
-    }
-
-    pub async fn find_inactive(db: &DbConn) -> anyhow::Result<Vec<user::Model>> {
-        User::find()
-            .filter(user::Column::IsActive.eq(false))
-            .order_by_asc(user::Column::DateJoined)
-            .all(db)
             .await
             .map_err(anyhow::Error::msg)
     }

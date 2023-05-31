@@ -27,5 +27,25 @@ pretty_assertions = "1.3.0"
 mock = ["sea-orm/mock"]
 
 [[test]]
-name = "user_entity_test"
+name = "user_test"
+required-features = ["mock"]
+
+[[test]]
+name = "user_profile_test"
+required-features = ["mock"]
+
+[[test]]
+name = "auditing_test"
+required-features = ["mock"]
+
+[[test]]
+name = "recipe_test"
+required-features = ["mock"]
+
+[[test]]
+name = "user_relations_test"
+required-features = ["mock"]
+
+[[test]]
+name = "recipe_relations_test"
 required-features = ["mock"]
