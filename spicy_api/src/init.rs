@@ -2,8 +2,7 @@ use anyhow::anyhow;
 use service::sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use std::{env, time::Duration};
 
-/// Establishes the connection to the data source and runs the initial
-/// migration on startup.
+/// Establishes the connection to the data source.
 pub async fn setup_conn() -> anyhow::Result<DatabaseConnection> {
     let mut opt = ConnectOptions::new(env::var("DATABASE_URL")?);
     opt.max_connections(100)

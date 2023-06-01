@@ -1,0 +1,11 @@
+server:
+  protocol: "https"
+  host: "-url-"
+  port: 0
+
+token:
+  secret_key: "5533417859336b3063484251636a426b4e544e6a636a4d33537a4e35"
+  hmac_secret_key: "b2c6e47ff55b9dde17a0c804b88935d6d1fc52f2c089a04fc50d593a1ec55773"
+  exp_time: 30
+
+frontend_url: "-url-"

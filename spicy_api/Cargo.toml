@@ -4,14 +4,22 @@ authors.workspace = true
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+name = "spicy_lib"
+path = "src/lib.rs"
+
 [dependencies]
 actix-web = "4.3.1"
+tokio = { version = "1.28.2", features = ["rt"] }
 serde.workspace = true
 serde_json.workspace = true
-anyhow.workspace = true
-dotenvy = "0.15.7"
-listenfd = "1.0.1"
 config = { version = "0.13.3", features = ["yaml"] }
+dotenvy = "0.15.7"
+argon2 = "0.5.0"
+hex = "0.4.3"
+pasetors = "0.6.6"
+listenfd = "1.0.1"
+anyhow.workspace = true
 # Path deps
 entity = { path = "persistence/entity" }
 service = { path = "persistence/service" }
