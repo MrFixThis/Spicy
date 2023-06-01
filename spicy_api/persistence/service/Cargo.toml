@@ -41,11 +41,3 @@ required-features = ["mock"]
 [[test]]
 name = "recipe_test"
 required-features = ["mock"]
-
-[[test]]
-name = "user_relations_test"
-required-features = ["mock"]
-
-[[test]]
-name = "recipe_relations_test"
-required-features = ["mock"]

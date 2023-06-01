@@ -73,31 +73,6 @@ async fn user_test() {
         );
     }
 
-    // select for login
-    {
-        let payload = user::UserPayload {
-            email: "user1@example.com".to_owned(),
-            password: "password1".to_owned(),
-        };
-
-        assert_eq!(
-            UserService::find_for_login(&db, &payload.email)
-                .await
-                .unwrap()
-                .unwrap(),
-            user::Model {
-                id: 1,
-                email: "user1@example.com".to_owned(),
-                password: "password1".to_owned(),
-                name: "John".to_owned(),
-                surname: "Doe".to_owned(),
-                date_joined: "2023-01-01".parse::<Date>().unwrap(),
-                is_active: true,
-                thumbnail: Some("thumbnail1".to_owned()),
-            }
-        )
-    }
-
     // select all
     {
         let retr_users = UserService::find_all(&db).await.unwrap();

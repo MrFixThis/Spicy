@@ -100,52 +100,46 @@ where
 pub struct RelationService;
 
 impl RelationService {
-    pub async fn load_one_by_pk<F, E, Pk, S>(
+    pub async fn load_one_by_pk<E, Pk, F>(
         db: &DbConn,
-        target: S,
+        target: F,
         pk: Pk,
-    ) -> anyhow::Result<Option<F::Model>>
+    ) -> anyhow::Result<Option<(E::Model, Option<F::Model>)>>
     where
         F: EntityTrait,
         F::Model: Send + Sync,
         E: EntityTrait + Related<F>,
         E::Model: Send + Sync,
-        S: EntityOrSelect<F>,
         Pk: Into<<E::PrimaryKey as PrimaryKeyTrait>::ValueType> + Send + 'static,
     {
         E::find_by_id(pk)
-            .all(db)
-            .await?
-            .load_one(target, db)
+            .find_also_related(target)
+            .one(db)
             .await
-            .map(|mut e| e.pop())
-            .map(Option::flatten)
             .map_err(anyhow::Error::msg)
     }
 
-    pub async fn load_many_by_pk<F, E, Pk, S>(
+    pub async fn load_many_by_pk<E, Pk, F>(
         db: &DbConn,
-        target: S,
+        target: F,
         pk: Pk,
-    ) -> anyhow::Result<Vec<F::Model>>
+    ) -> anyhow::Result<Option<(E::Model, Vec<F::Model>)>>
     where
         F: EntityTrait,
         F::Model: Send + Sync,
         E: EntityTrait + Related<F>,
         E::Model: Send + Sync,
-        S: EntityOrSelect<F>,
         Pk: Into<<E::PrimaryKey as PrimaryKeyTrait>::ValueType> + Send + 'static,
     {
         E::find_by_id(pk)
+            .find_with_related(target)
             .all(db)
-            .await?
-            .load_many(target, db)
             .await
-            .map(|e| e.into_iter().flatten().collect())
+            .and_then(|mut e| Ok(e.pop()))
             .map_err(anyhow::Error::msg)
     }
 
-    pub async fn load_many_to_many<F, V, E, S>(
+    pub async fn load_many_to_many<E, V, F, S>(
         db: &DbConn,
         other: S,
         via: V,

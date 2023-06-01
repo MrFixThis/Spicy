@@ -21,9 +21,7 @@ impl QueryRepository<User, PrimaryKey> for UserService {
 impl MutationRepository<User, user::ActiveModel, PrimaryKey> for UserService {}
 
 impl UserService {
-    pub async fn find_for_login(
-        db: &DbConn, email: &str
-    ) -> anyhow::Result<Option<user::Model>> {
+    pub async fn find_for_login(db: &DbConn, email: &str) -> anyhow::Result<Option<user::Model>> {
         User::find()
             .filter(
                 Condition::all()
