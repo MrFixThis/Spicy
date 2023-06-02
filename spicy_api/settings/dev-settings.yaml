@@ -4,8 +4,8 @@ server:
   port: 9191
 
 token:
-  secret_key: "5533417859336c454d3359314d324e794d7a633d"
-  hmac_secret_key: "973e077ae7f82258f3b1a229ddb44ad0ad3d113385f58629624651d4e51198a7"
+  secret_key: "83b9278d70610925acdd61adca69331a"
+  implicit_assert: "973e077ae7f82258f3b1a229ddb44ad0ad3d113385f58629624651d4e51198a7"
   exp_time: 60
 
 frontend_url: "-url-"

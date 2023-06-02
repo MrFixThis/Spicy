@@ -1,12 +1,12 @@
 use anyhow::anyhow;
-use config::{File, Config};
+use config::{Config, File};
 use serde::Deserialize;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct AppSettings {
     pub server: Server,
     pub token: Token,
-    pub frontend_url: String
+    pub frontend_url: String,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -19,8 +19,8 @@ pub struct Server {
 #[derive(Debug, Clone, Deserialize)]
 pub struct Token {
     pub secret_key: String,
-    pub hmac_secret_key: String,
-    pub exp_time: u32,
+    pub implicit_assert: String,
+    pub exp_time: i64,
 }
 
 #[derive(Debug)]
@@ -45,7 +45,7 @@ impl TryFrom<String> for Environment {
         match value.as_str() {
             "dev" | "development" => Ok(Self::Development),
             "prod" | "production" => Ok(Self::Production),
-            other => Err(anyhow!(format!(r#"unknown environment "{other}""#)))
+            other => Err(anyhow!(format!(r#"unknown environment "{other}""#))),
         }
     }
 }

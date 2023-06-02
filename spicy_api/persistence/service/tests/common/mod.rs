@@ -28,5 +28,5 @@ where
     M: Deserialize<'de>,
 {
     let cont = fs::read_to_string(format!("testdata/{path}"))?;
-    serde_json::from_str(cont.as_str()).map_err(anyhow::Error::msg)
+    Ok(serde_json::from_str(cont.as_str())?)
 }
