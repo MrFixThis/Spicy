@@ -1,5 +1,5 @@
 use entity::{prelude::Recipe, recipe};
-use sea_orm::{DbConn, EntityTrait, QueryOrder};
+use sea_orm::{DbConn, EntityTrait, QueryOrder, DbErr};
 
 use crate::{pk_ty, MutationRepository, QueryRepository};
 
@@ -9,12 +9,11 @@ pk_ty!(recipe::PrimaryKey);
 
 #[async_trait::async_trait]
 impl QueryRepository<Recipe, PrimaryKey> for RecipeService {
-    async fn find_all(db: &DbConn) -> anyhow::Result<Vec<recipe::Model>> {
+    async fn find_all(db: &DbConn) -> Result<Vec<recipe::Model>, DbErr> {
         Recipe::find()
             .order_by_asc(recipe::Column::DateCreated)
             .all(db)
             .await
-            .map_err(anyhow::Error::msg)
     }
 }
 

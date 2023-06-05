@@ -3,7 +3,7 @@ use pasetors::{
     claims::{Claims, ClaimsValidationRules},
     keys::SymmetricKey,
     local,
-    token::{TrustedToken, UntrustedToken},
+    token::UntrustedToken,
     version4::V4,
     Local,
 };
@@ -13,8 +13,8 @@ use uuid::Uuid;
 /// see [Algorithm Lucidity](https://github.com/paseto-standard/paseto-spec/blob/master/docs/02-Implementation-Guide/03-Algorithm-Lucidity.md).
 const SECRET_KEY_LENGTH: usize = 32;
 
-/// Issues a new `Passeto` considering a given `user`'s id as a custom claim.
-pub fn issue_token(user_id: u32) -> anyhow::Result<String> {
+/// Issues a new `Passeto` token considering a given `user`'s id as a custom claim.
+pub fn issue_token(user_id: i32) -> anyhow::Result<String> {
     let token_settings = crate::settings::load_app_settings()?.token;
     let sk = secret_key_checked_build(token_settings.secret_key.as_bytes())?;
     let mut claims = Claims::new()?;
@@ -33,9 +33,9 @@ pub fn issue_token(user_id: u32) -> anyhow::Result<String> {
     .map_err(|e| anyhow::Error::msg(format!("TokenIssue: {e}")))
 }
 
-/// Verifies a given `Paseto` token and returns its [`TrustedToken`]
-/// representation if it was successfully validated.
-pub fn verify_token(token: String) -> anyhow::Result<TrustedToken> {
+/// Verifies a given `Paseto` token and returns its optional and validated [`Claims`]
+/// if it was successfully verified.
+pub fn verify_token(token: String) -> anyhow::Result<Option<Claims>> {
     let token_settings = crate::settings::load_app_settings()?.token;
     let sk = secret_key_checked_build(token_settings.secret_key.as_bytes())?;
     let mut validator_rules = ClaimsValidationRules::new();
@@ -49,6 +49,7 @@ pub fn verify_token(token: String) -> anyhow::Result<TrustedToken> {
         None,
         Some(token_settings.implicit_assert.as_bytes()),
     )
+    .map(|t| t.payload_claims().cloned())
     .map_err(|e| anyhow::Error::msg(format!("TokenVerification: {e}")))
 }
 

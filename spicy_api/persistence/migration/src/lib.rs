@@ -1,4 +1,4 @@
-pub use sea_orm_migration::prelude::*;
+use sea_orm_migration::prelude::*;
 
 mod m20230521_030921_initial;
 

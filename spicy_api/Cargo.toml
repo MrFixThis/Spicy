@@ -8,9 +8,17 @@ edition = "2021"
 name = "spicy_src"
 path = "src/lib.rs"
 
+[workspace]
+members = ["persistence/*"]
+
+[workspace.package]
+authors = ["MrFixThis <mrfixthis55@gmail.com>"]
+
 [dependencies]
 actix-web = "4.3.1"
-tokio = { version = "1.28.2", features = ["rt"] }
+actix-multipart = { version = "0.6.0", features = ["actix-multipart-derive"] }
+actix-web-lab = "0.19.1"
+tokio = { version = "1.28.2", features = ["rt", "fs"] }
 serde.workspace = true
 serde_json.workspace = true
 config = { version = "0.13.3", features = ["yaml"] }
@@ -26,13 +34,11 @@ entity = { path = "persistence/entity" }
 service = { path = "persistence/service" }
 migration = { path = "persistence/migration" }
 
-[workspace]
-members = ["persistence/*"]
-
-[workspace.package]
-authors = ["MrFixThis <mrfixthis55@gmail.com>"]
+[dev-dependencies]
+pretty_assertions.workspace = true
 
 [workspace.dependencies]
-anyhow = "1.0.71"
 serde = { version = "1.0.163", features = ["derive"] }
 serde_json = "1.0.96"
+anyhow = "1.0.71"
+pretty_assertions = "1.3.0"

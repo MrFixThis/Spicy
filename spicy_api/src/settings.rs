@@ -16,6 +16,12 @@ pub struct Server {
     pub port: u16,
 }
 
+impl Server {
+    pub fn socket_address(&self) -> (String, u16) {
+        (self.host.clone(), self.port)
+    }
+}
+
 #[derive(Debug, Clone, Deserialize)]
 pub struct Token {
     pub secret_key: String,
@@ -64,13 +70,13 @@ impl Environment {
 /// the root ***.env*** file.
 pub fn load_app_settings() -> anyhow::Result<AppSettings> {
     let settings_dir = std::env::current_dir()?.join("settings");
-    let app_env: Environment = std::env::var("APP_ENV")?
-        .try_into()
-        .unwrap_or(Environment::Development);
+    let app_env: Environment = std::env::var("APP_ENV")
+        .or(Ok::<_, anyhow::Error>(Environment::Development.to_string()))?
+        .try_into()?;
 
     Config::builder()
         .add_source(File::from(settings_dir.join("settings.yaml")))
-        .add_source(File::with_name(app_env.settings_file_name()))
+        .add_source(File::from(settings_dir.join(app_env.settings_file_name())))
         .build()
         .map_err(anyhow::Error::msg)
         .and_then(|c| c.try_deserialize().map_err(anyhow::Error::msg))

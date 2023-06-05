@@ -22,23 +22,26 @@ where
     E: EntityTrait,
     Pk: Into<<E::PrimaryKey as PrimaryKeyTrait>::ValueType> + Send + 'static,
 {
-    async fn find_by_pk(db: &DbConn, pk: Pk) -> anyhow::Result<Option<E::Model>> {
-        E::find_by_id(pk).one(db).await.map_err(anyhow::Error::msg)
+    async fn find_by_pk(db: &DbConn, pk: Pk) -> Result<Option<E::Model>, DbErr> {
+        E::find_by_id(pk).one(db).await
     }
 
-    async fn find_all(db: &DbConn) -> anyhow::Result<Vec<E::Model>> {
-        E::find().all(db).await.map_err(anyhow::Error::msg)
-    }
-
-    async fn find_all_by<F>(db: &DbConn, expr: F) -> anyhow::Result<Vec<E::Model>>
+    async fn find_by<F>(db: &DbConn, expr: F) -> Result<Option<E::Model>, DbErr>
     where
         F: IntoCondition + Send,
     {
-        E::find()
-            .filter(expr)
-            .all(db)
-            .await
-            .map_err(anyhow::Error::msg)
+        E::find().filter(expr).one(db).await
+    }
+
+    async fn find_all(db: &DbConn) -> Result<Vec<E::Model>, DbErr> {
+        E::find().all(db).await
+    }
+
+    async fn find_all_by<F>(db: &DbConn, expr: F) -> Result<Vec<E::Model>, DbErr>
+    where
+        F: IntoCondition + Send,
+    {
+        E::find().filter(expr).all(db).await
     }
 }
 
@@ -50,12 +53,8 @@ where
     A: ActiveModelTrait + ActiveModelBehavior<Entity = E> + Send,
     Pk: Into<<E::PrimaryKey as PrimaryKeyTrait>::ValueType> + Send + 'static,
 {
-    async fn create(db: &DbConn, from_mod: E::Model) -> anyhow::Result<A> {
-        from_mod
-            .into_active_model()
-            .save(db)
-            .await
-            .map_err(anyhow::Error::msg)
+    async fn create(db: &DbConn, from_mod: E::Model) -> Result<A, DbErr> {
+        Ok(from_mod.into_active_model().save(db).await?)
     }
 
     async fn update_by<V>(
@@ -63,36 +62,28 @@ where
         col: E::Column,
         col_val: V,
         from_mod: E::Model,
-    ) -> anyhow::Result<A>
+    ) -> Result<A, DbErr>
     where
         V: Into<Value> + Send,
     {
         let mut ent = from_mod.into_active_model();
-
         ent.set(col, col_val.into());
-        ent.reset_all().save(db).await.map_err(anyhow::Error::msg)
+        Ok(ent.reset_all().save(db).await?)
     }
 
-    async fn delete_by_pk(db: &DbConn, pk: Pk) -> anyhow::Result<DeleteResult> {
-        E::delete_by_id(pk)
-            .exec(db)
-            .await
-            .map_err(anyhow::Error::msg)
+    async fn delete_by_pk(db: &DbConn, pk: Pk) -> Result<DeleteResult, DbErr> {
+        Ok(E::delete_by_id(pk).exec(db).await?)
     }
 
-    async fn delete_all(db: &DbConn) -> anyhow::Result<DeleteResult> {
-        E::delete_many().exec(db).await.map_err(anyhow::Error::msg)
+    async fn delete_all(db: &DbConn) -> Result<DeleteResult, DbErr> {
+        Ok(E::delete_many().exec(db).await?)
     }
 
-    async fn delete_all_by<F>(db: &DbConn, expr: F) -> anyhow::Result<DeleteResult>
+    async fn delete_all_by<F>(db: &DbConn, expr: F) -> Result<DeleteResult, DbErr>
     where
         F: IntoCondition + Send,
     {
-        E::delete_many()
-            .filter(expr)
-            .exec(db)
-            .await
-            .map_err(anyhow::Error::msg)
+        Ok(E::delete_many().filter(expr).exec(db).await?)
     }
 }
 
@@ -104,7 +95,7 @@ impl RelationService {
         db: &DbConn,
         target: F,
         pk: Pk,
-    ) -> anyhow::Result<Option<(E::Model, Option<F::Model>)>>
+    ) -> Result<Option<(E::Model, Option<F::Model>)>, DbErr>
     where
         F: EntityTrait,
         F::Model: Send + Sync,
@@ -112,18 +103,14 @@ impl RelationService {
         E::Model: Send + Sync,
         Pk: Into<<E::PrimaryKey as PrimaryKeyTrait>::ValueType> + Send + 'static,
     {
-        E::find_by_id(pk)
-            .find_also_related(target)
-            .one(db)
-            .await
-            .map_err(anyhow::Error::msg)
+        Ok(E::find_by_id(pk).find_also_related(target).one(db).await?)
     }
 
     pub async fn load_many_by_pk<E, Pk, F>(
         db: &DbConn,
         target: F,
         pk: Pk,
-    ) -> anyhow::Result<Option<(E::Model, Vec<F::Model>)>>
+    ) -> Result<Option<(E::Model, Vec<F::Model>)>, DbErr>
     where
         F: EntityTrait,
         F::Model: Send + Sync,
@@ -131,19 +118,18 @@ impl RelationService {
         E::Model: Send + Sync,
         Pk: Into<<E::PrimaryKey as PrimaryKeyTrait>::ValueType> + Send + 'static,
     {
-        E::find_by_id(pk)
+        Ok(E::find_by_id(pk)
             .find_with_related(target)
             .all(db)
             .await
-            .and_then(|mut e| Ok(e.pop()))
-            .map_err(anyhow::Error::msg)
+            .map(|mut e| e.pop())?)
     }
 
     pub async fn load_many_to_many<E, V, F, S>(
         db: &DbConn,
         other: S,
         via: V,
-    ) -> anyhow::Result<Vec<Vec<F::Model>>>
+    ) -> Result<Vec<Vec<F::Model>>, DbErr>
     where
         F: EntityTrait,
         F::Model: Send + Sync,
@@ -153,12 +139,11 @@ impl RelationService {
         V::Model: Send + Sync,
         S: EntityOrSelect<F>,
     {
-        E::find()
+        Ok(E::find()
             .all(db)
             .await?
             .load_many_to_many(other, via, db)
-            .await
-            .map_err(anyhow::Error::msg)
+            .await?)
     }
 }
 
