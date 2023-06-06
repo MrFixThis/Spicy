@@ -1,5 +1,10 @@
+use spicy_src;
+
 #[actix_web::main]
 async fn main() -> anyhow::Result<()> {
-    dotenvy::dotenv()?;
+    spicy_src::setup_app()
+    .await?
+    .await?;
+
     Ok(())
 }

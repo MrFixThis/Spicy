@@ -16,6 +16,13 @@ use sea_orm::{sea_query::IntoCondition, *};
 pub use user::UserService;
 pub use user_profile::UserProfileService;
 
+#[macro_export]
+macro_rules! pk_ty {
+    ($pk:ty) => {
+        pub type PrimaryKey = <$pk as ::sea_orm::PrimaryKeyTrait>::ValueType;
+    };
+}
+
 #[async_trait::async_trait]
 pub trait QueryRepository<E, Pk>
 where
@@ -50,11 +57,11 @@ pub trait MutationRepository<E, A, Pk>: QueryRepository<E, Pk>
 where
     E: EntityTrait,
     E::Model: IntoActiveModel<A>,
-    A: ActiveModelTrait + ActiveModelBehavior<Entity = E> + Send,
+    A: ActiveModelTrait + ActiveModelBehavior<Entity = E> + Send + 'static,
     Pk: Into<<E::PrimaryKey as PrimaryKeyTrait>::ValueType> + Send + 'static,
 {
-    async fn create(db: &DbConn, from_mod: E::Model) -> Result<A, DbErr> {
-        Ok(from_mod.into_active_model().save(db).await?)
+    async fn create(db: &DbConn, from_mod: A) -> Result<E::Model, DbErr> {
+        from_mod.insert(db).await
     }
 
     async fn update_by<V>(
@@ -68,22 +75,22 @@ where
     {
         let mut ent = from_mod.into_active_model();
         ent.set(col, col_val.into());
-        Ok(ent.reset_all().save(db).await?)
+        ent.reset_all().save(db).await
     }
 
     async fn delete_by_pk(db: &DbConn, pk: Pk) -> Result<DeleteResult, DbErr> {
-        Ok(E::delete_by_id(pk).exec(db).await?)
+        E::delete_by_id(pk).exec(db).await
     }
 
     async fn delete_all(db: &DbConn) -> Result<DeleteResult, DbErr> {
-        Ok(E::delete_many().exec(db).await?)
+        E::delete_many().exec(db).await
     }
 
     async fn delete_all_by<F>(db: &DbConn, expr: F) -> Result<DeleteResult, DbErr>
     where
         F: IntoCondition + Send,
     {
-        Ok(E::delete_many().filter(expr).exec(db).await?)
+        E::delete_many().filter(expr).exec(db).await
     }
 }
 
@@ -103,7 +110,7 @@ impl RelationService {
         E::Model: Send + Sync,
         Pk: Into<<E::PrimaryKey as PrimaryKeyTrait>::ValueType> + Send + 'static,
     {
-        Ok(E::find_by_id(pk).find_also_related(target).one(db).await?)
+        E::find_by_id(pk).find_also_related(target).one(db).await
     }
 
     pub async fn load_many_by_pk<E, Pk, F>(
@@ -118,11 +125,11 @@ impl RelationService {
         E::Model: Send + Sync,
         Pk: Into<<E::PrimaryKey as PrimaryKeyTrait>::ValueType> + Send + 'static,
     {
-        Ok(E::find_by_id(pk)
+        E::find_by_id(pk)
             .find_with_related(target)
             .all(db)
             .await
-            .map(|mut e| e.pop())?)
+            .map(|mut e| e.pop())
     }
 
     pub async fn load_many_to_many<E, V, F, S>(
@@ -139,17 +146,10 @@ impl RelationService {
         V::Model: Send + Sync,
         S: EntityOrSelect<F>,
     {
-        Ok(E::find()
+        E::find()
             .all(db)
             .await?
             .load_many_to_many(other, via, db)
-            .await?)
+            .await
     }
-}
-
-#[macro_export]
-macro_rules! pk_ty {
-    ($pk:ty) => {
-        pub type PrimaryKey = <$pk as ::sea_orm::PrimaryKeyTrait>::ValueType;
-    };
 }

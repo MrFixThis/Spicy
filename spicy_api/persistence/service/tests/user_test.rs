@@ -20,6 +20,10 @@ async fn user_test() {
             },
             MockExecResult {
                 last_insert_id: 0,
+                rows_affected: 1,
+            },
+            MockExecResult {
+                last_insert_id: 0,
                 rows_affected: 2,
             },
         ],
@@ -28,28 +32,28 @@ async fn user_test() {
 
     // create
     {
-        let new_user = user::Model {
-            id: 0,
-            email: "user1@example.com".to_owned(),
-            password: "password1".to_owned(),
-            name: "John".to_owned(),
-            surname: "Doe".to_owned(),
-            date_joined: "2023-01-01".parse::<Date>().unwrap(),
-            is_active: true,
-            thumbnail: Some("thumbnail1".to_owned()),
+        let new_user = user::ActiveModel {
+            id: sea_orm::NotSet,
+            email: sea_orm::Set("user1@example.com".to_owned()),
+            password: sea_orm::Set("password1".to_owned()),
+            name: sea_orm::Set("John".to_owned()),
+            surname: sea_orm::Set("Doe".to_owned()),
+            date_joined: sea_orm::Set("2023-01-01".parse::<Date>().unwrap()),
+            is_active: sea_orm::Set(true),
+            thumbnail: sea_orm::Set(Some("thumbnail1".to_owned())),
         };
 
         assert_eq!(
             UserService::create(&db, new_user).await.unwrap(),
-            user::ActiveModel {
-                id: ActiveValue::Unchanged(1),
-                email: ActiveValue::Unchanged("user1@example.com".to_owned()),
-                password: ActiveValue::Unchanged("password1".to_owned()),
-                name: ActiveValue::Unchanged("John".to_owned()),
-                surname: ActiveValue::Unchanged("Doe".to_owned()),
-                date_joined: ActiveValue::Unchanged("2023-01-01".parse::<Date>().unwrap()),
-                is_active: ActiveValue::Unchanged(true),
-                thumbnail: ActiveValue::Unchanged(Some("thumbnail1".to_owned())),
+            user::Model {
+                id: 1,
+                email: "user1@example.com".to_owned(),
+                password: "password1".to_owned(),
+                name: "John".to_owned(),
+                surname: "Doe".to_owned(),
+                date_joined: "2023-01-01".parse::<Date>().unwrap(),
+                is_active: true,
+                thumbnail: Some("thumbnail1".to_owned()),
             }
         );
     }

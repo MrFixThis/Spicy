@@ -1,5 +1,5 @@
 use entity::{auditing, prelude::Auditing};
-use sea_orm::{DbConn, EntityTrait, QueryOrder, DbErr};
+use sea_orm::{DbConn, DbErr, EntityTrait, QueryOrder};
 
 use crate::{pk_ty, QueryRepository};
 

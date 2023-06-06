@@ -18,6 +18,8 @@ authors = ["MrFixThis <mrfixthis55@gmail.com>"]
 actix-web = "4.3.1"
 actix-multipart = { version = "0.6.0", features = ["actix-multipart-derive"] }
 actix-web-lab = "0.19.1"
+actix-files = "0.6.2"
+actix-cors = "0.6.4"
 tokio = { version = "1.28.2", features = ["rt", "fs"] }
 serde.workspace = true
 serde_json.workspace = true

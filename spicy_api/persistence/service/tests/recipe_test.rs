@@ -23,6 +23,10 @@ async fn recipe_test() {
             },
             MockExecResult {
                 last_insert_id: 0,
+                rows_affected: 1,
+            },
+            MockExecResult {
+                last_insert_id: 0,
                 rows_affected: 2,
             },
             MockExecResult {
@@ -35,40 +39,40 @@ async fn recipe_test() {
 
     // create
     {
-        let new_recipe = recipe::Model {
-            id: 0,
-            title: "Pasta Carbonara".to_owned(),
-            date_created: "2023-01-01".parse::<Date>().unwrap(),
-            description: "Classic Italian pasta dish".to_owned(),
-            preparation_steps: "1. Cook pasta. \
+        let new_recipe = recipe::ActiveModel {
+            id: sea_orm::NotSet,
+            title: sea_orm::Set("Pasta Carbonara".to_owned()),
+            date_created: sea_orm::Set("2023-01-01".parse::<Date>().unwrap()),
+            description: sea_orm::Set("Classic Italian pasta dish".to_owned()),
+            preparation_steps: sea_orm::Set(
+                "1. Cook pasta. \
                 2. Fry bacon. \
                 3. Beat eggs and mix with cheese. \
                 4. Combine pasta, bacon, and egg mixture. \
                 5. Serve hot."
-                .to_owned(),
-            cooking_time: "00:30:00".parse::<Time>().unwrap(),
-            is_visible: true,
-            user_id: 1,
+                    .to_owned(),
+            ),
+            cooking_time: sea_orm::Set("00:30:00".parse::<Time>().unwrap()),
+            is_visible: sea_orm::Set(true),
+            user_id: sea_orm::Set(1),
         };
 
         assert_eq!(
             RecipeService::create(&db, new_recipe).await.unwrap(),
-            recipe::ActiveModel {
-                id: ActiveValue::Unchanged(1),
-                title: ActiveValue::Unchanged("Pasta Carbonara".to_owned()),
-                date_created: ActiveValue::Unchanged("2023-01-01".parse::<Date>().unwrap()),
-                description: ActiveValue::Unchanged("Classic Italian pasta dish".to_owned()),
-                preparation_steps: ActiveValue::Unchanged(
-                    "1. Cook pasta. \
+            recipe::Model {
+                id: 1,
+                title: "Pasta Carbonara".to_owned(),
+                date_created: "2023-01-01".parse::<Date>().unwrap(),
+                description: "Classic Italian pasta dish".to_owned(),
+                preparation_steps: "1. Cook pasta. \
                     2. Fry bacon. \
                     3. Beat eggs and mix with cheese. \
                     4. Combine pasta, bacon, and egg mixture. \
                     5. Serve hot."
-                        .to_owned()
-                ),
-                cooking_time: ActiveValue::Unchanged("00:30:00".parse::<Time>().unwrap()),
-                is_visible: ActiveValue::Unchanged(true),
-                user_id: ActiveValue::Unchanged(1),
+                    .to_owned(),
+                cooking_time: "00:30:00".parse::<Time>().unwrap(),
+                is_visible: true,
+                user_id: 1,
             }
         );
     }

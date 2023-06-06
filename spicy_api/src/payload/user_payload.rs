@@ -1,10 +1,43 @@
 use actix_multipart::form::{tempfile::TempFile, text::Text, MultipartForm};
 use entity::{user, user_profile};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use service::sea_orm;
 
 use crate::auth::password;
 use crate::utils;
+
+#[derive(Debug, Deserialize)]
+pub struct UserCredetials {
+    pub email: String,
+    pub password: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct LoggedInUser {
+    pub name: String,
+    pub surname: String,
+    pub thumbnail: String,
+    pub roles: Vec<String>,
+    pub token: String,
+}
+
+impl LoggedInUser {
+    pub fn new(
+        name: String,
+        surname: String,
+        thumbnail: String,
+        roles: Vec<String>,
+        token: String,
+    ) -> Self {
+        Self {
+            name,
+            surname,
+            thumbnail,
+            roles,
+            token,
+        }
+    }
+}
 
 #[derive(Debug, MultipartForm)]
 pub struct NewUser {
@@ -17,23 +50,22 @@ pub struct NewUser {
 }
 
 impl NewUser {
-    pub async fn into_user_model(self) -> user::Model {
-        let password =
-            password::hash_password(self.password.into_inner().as_bytes()).unwrap();
+    pub async fn into_user_active_model(self) -> user::ActiveModel {
+        let password = password::hash_password(self.password.into_inner().as_bytes()).unwrap();
         let thumbnail = match self.thumbnail {
-            Some(tf) => utils::try_persist_thumbnail(tf).await,
+            Some(tf) => utils::try_persist_file("users/", tf).await,
             None => None,
         };
 
-        user::Model {
-            id: 0,
-            email: self.email.into_inner(),
-            password,
-            name: self.name.into_inner(),
-            surname: self.surname.into_inner(),
-            date_joined: chrono::Local::now().date_naive(),
-            is_active: true, // default
-            thumbnail,
+        user::ActiveModel {
+            id: sea_orm::NotSet,
+            email: sea_orm::Set(self.email.into_inner()),
+            password: sea_orm::Set(password),
+            name: sea_orm::Set(self.name.into_inner()),
+            surname: sea_orm::Set(self.surname.into_inner()),
+            date_joined: sea_orm::Set(chrono::Local::now().date_naive()),
+            is_active: sea_orm::Set(true), // default
+            thumbnail: sea_orm::Set(thumbnail),
         }
     }
 }
@@ -82,7 +114,7 @@ impl UpdatedUser {
                 Some(tf) => match st_user.thumbnail {
                     Some(fl) => {
                         _ = tokio::fs::remove_file(fl).await;
-                        sea_orm::Set(utils::try_persist_thumbnail(tf).await)
+                        sea_orm::Set(utils::try_persist_file("users/", tf).await)
                     }
                     None => sea_orm::Set(None),
                 },

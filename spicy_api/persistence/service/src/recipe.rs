@@ -1,5 +1,5 @@
 use entity::{prelude::Recipe, recipe};
-use sea_orm::{DbConn, EntityTrait, QueryOrder, DbErr};
+use sea_orm::{DbConn, DbErr, EntityTrait, QueryOrder};
 
 use crate::{pk_ty, MutationRepository, QueryRepository};
 

@@ -2,10 +2,9 @@ use std::io::Read;
 
 use actix_multipart::form::tempfile::TempFile;
 use uuid::Uuid;
+use crate::STATIC_DATA_PATH;
 
-const THUMBNAILS_PATH: &str = "static_data/users/thumbnails";
-
-pub async fn try_persist_thumbnail(tf: TempFile) -> Option<String> {
+pub async fn try_persist_file(path: &str, tf: TempFile) -> Option<String> {
     let mut buff = Vec::with_capacity(tf.size);
     match tf.file.as_file().read_to_end(&mut buff) {
         Ok(_) => {
@@ -16,7 +15,7 @@ pub async fn try_persist_thumbnail(tf: TempFile) -> Option<String> {
                 String::default()
             };
 
-            let path = format!("{THUMBNAILS_PATH}/{new_name}{ext}");
+            let path = format!("{STATIC_DATA_PATH}/{path}{new_name}{ext}");
             _ = tokio::fs::write(&path, buff).await;
 
             Some(path)

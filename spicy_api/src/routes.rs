@@ -1,8 +1,8 @@
 use actix_web::{HttpResponse, Responder};
 
 mod auditing;
+pub mod sessions;
 mod recipes;
-mod session;
 mod users;
 
 use serde_json::json;
@@ -18,7 +18,7 @@ macro_rules! route_config {
         $( ,configs=[ $( $conf:ident ),* ] )?
         $( ,middleware=[ $( $mw:ident ),* ] )?
     } => {
-        fn $name(cfg: &mut ::actix_web::web::ServiceConfig) {
+        pub fn $name(cfg: &mut ::actix_web::web::ServiceConfig) {
             cfg.service(
                 ::actix_web::web::scope($pfx)
                     $( .service($srv) )+
@@ -33,7 +33,7 @@ macro_rules! route_config {
 async fn health_check() -> impl Responder {
     HttpResponse::Ok().json(json!({
         "status": "success",
-        "msg": "Spicy's API is Up"
+        "msg": "Spicy's API Running"
     }))
 }
 
@@ -41,7 +41,6 @@ route_config! {
     name = users_config,
     scope_pfx = "/users",
     services = [
-        register_user,
         fetch_user,
         fetch_all_users,
         update_user,

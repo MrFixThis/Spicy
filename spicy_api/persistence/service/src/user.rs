@@ -1,6 +1,7 @@
 use crate::{pk_ty, MutationRepository, QueryRepository};
-use ::entity::{prelude::User, user};
-use sea_orm::{ColumnTrait, Condition, DbConn, EntityTrait, QueryFilter, QueryOrder, DbErr};
+use entity::likes;
+use ::entity::{prelude::User, user, recipe};
+use sea_orm::{ColumnTrait, Condition, DbConn, DbErr, EntityTrait, QueryFilter, QueryOrder};
 
 #[derive(Debug)]
 pub struct UserService;
@@ -28,6 +29,16 @@ impl UserService {
                     .add(user::Column::IsActive.eq(true)),
             )
             .one(db)
+            .await
+    }
+
+    pub async fn find_user_recipes(
+        db: &DbConn,
+        pk: PrimaryKey
+    ) -> Result<Vec<(user::Model, Option<recipe::Model>)>, DbErr> {
+        User::find_by_id(pk)
+            .find_also_linked(likes::Entity)
+            .all(db)
             .await
     }
 }

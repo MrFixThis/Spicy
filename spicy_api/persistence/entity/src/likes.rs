@@ -26,6 +26,18 @@ pub enum Relation {
     Recipe,
 }
 
+impl Linked for Entity {
+    type FromEntity = super::user::Entity;
+    type ToEntity = super::recipe::Entity;
+
+    fn link(&self) -> Vec<sea_orm::LinkDef> {
+        vec![
+            Relation::User.def().rev(),
+            Relation::Recipe.def()
+        ]
+    }
+}
+
 impl Related<super::user::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::User.def()

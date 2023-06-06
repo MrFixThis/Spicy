@@ -20,6 +20,10 @@ async fn user_profile_test() {
             },
             MockExecResult {
                 last_insert_id: 0,
+                rows_affected: 1,
+            },
+            MockExecResult {
+                last_insert_id: 0,
                 rows_affected: 2,
             },
         ],
@@ -28,26 +32,24 @@ async fn user_profile_test() {
 
     // create
     {
-        let new_user_profile = user_profile::Model {
-            id: 0,
-            user_id: 1,
-            phone_number: Some("9817453026".to_owned()),
-            birth_date: Some("1990-01-01".parse::<Date>().unwrap()),
-            bio: Some("I love cooking and experimenting with new recipes.".to_owned()),
+        let new_user_profile = user_profile::ActiveModel {
+            id: sea_orm::NotSet,
+            user_id: sea_orm::Set(1),
+            phone_number: sea_orm::Set(Some("9817453026".to_owned())),
+            birth_date: sea_orm::Set(Some("1990-01-01".parse::<Date>().unwrap())),
+            bio: sea_orm::Set(Some("I love cooking and experimenting with new recipes.".to_owned())),
         };
 
         assert_eq!(
             UserProfileService::create(&db, new_user_profile)
                 .await
                 .unwrap(),
-            user_profile::ActiveModel {
-                id: ActiveValue::Unchanged(1),
-                user_id: ActiveValue::Unchanged(1),
-                phone_number: ActiveValue::Unchanged(Some("9817453026".to_owned())),
-                birth_date: ActiveValue::Unchanged(Some("1990-01-01".parse::<Date>().unwrap())),
-                bio: ActiveValue::Unchanged(Some(
-                    "I love cooking and experimenting with new recipes.".to_owned()
-                ))
+            user_profile::Model {
+                id: 1,
+                user_id: 1,
+                phone_number: Some("9817453026".to_owned()),
+                birth_date: Some("1990-01-01".parse::<Date>().unwrap()),
+                bio: Some("I love cooking and experimenting with new recipes.".to_owned()),
             }
         );
     }

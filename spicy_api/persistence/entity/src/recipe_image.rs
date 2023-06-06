@@ -7,11 +7,7 @@ pub struct Model {
     #[sea_orm(primary_key)]
     #[serde(default)]
     pub id: i32,
-    #[sea_orm(column_type = "String(Some(255))", unique)]
-    pub name: String,
-    #[sea_orm(column_type = "String(Some(8))")]
-    pub extension: String,
-    #[sea_orm(column_type = "String(Some(255))", unique)]
+    #[sea_orm(column_type = "Text", unique)]
     pub path: String,
     pub recipe_id: i32,
 }
