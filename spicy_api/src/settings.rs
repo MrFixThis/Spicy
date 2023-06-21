@@ -1,12 +1,23 @@
+use std::sync::OnceLock;
+
 use anyhow::anyhow;
 use config::{Config, File};
 use serde::Deserialize;
 
+static APP_SETTINGS: OnceLock<AppSettings> = OnceLock::new();
+
 #[derive(Debug, Clone, Deserialize)]
 pub struct AppSettings {
     pub server: Server,
+    pub datasource: Datasource,
     pub token: Token,
     pub frontend_url: String,
+}
+
+impl AppSettings {
+    pub fn get() -> &'static Self {
+        APP_SETTINGS.get().unwrap()
+    }
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -19,6 +30,25 @@ pub struct Server {
 impl Server {
     pub fn socket_address(&self) -> (String, u16) {
         (self.host.clone(), self.port)
+    }
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct Datasource {
+    pub name: String,
+    pub host: String,
+    pub username: String,
+    pub password: String,
+}
+
+impl Datasource {
+    const DB_BACKEND: &str = "mysql";
+
+    pub fn into_raw_format(self) -> (String, String) {
+        (
+            format!("{}://{}:{}@{}", Self::DB_BACKEND, self.username, self.password, self.host),
+            self.name,
+        )
     }
 }
 
@@ -56,7 +86,6 @@ impl TryFrom<String> for Environment {
     }
 }
 
-#[allow(unused)]
 impl Environment {
     pub fn settings_file_name(self) -> &'static str {
         match self {
@@ -66,18 +95,22 @@ impl Environment {
     }
 }
 
-/// Loads the applications's `settings` based on the specified application's environment in
+/// Parses the applications's `settings` based on the specified application's environment in
 /// the root ***.env*** file.
-pub fn load_app_settings() -> anyhow::Result<AppSettings> {
+pub fn parse_app_settings() -> anyhow::Result<()> {
     let settings_dir = std::env::current_dir()?.join("settings");
     let app_env: Environment = std::env::var("APP_ENV")
         .or(Ok::<_, anyhow::Error>(Environment::Development.to_string()))?
         .try_into()?;
 
-    Config::builder()
-        .add_source(File::from(settings_dir.join("settings.yaml")))
-        .add_source(File::from(settings_dir.join(app_env.settings_file_name())))
-        .build()
-        .map_err(anyhow::Error::msg)
-        .and_then(|c| c.try_deserialize().map_err(anyhow::Error::msg))
+    _ = APP_SETTINGS.set(
+        Config::builder()
+            .add_source(File::from(settings_dir.join("settings.yaml")))
+            .add_source(File::from(settings_dir.join(app_env.settings_file_name())))
+            .build()
+            .map_err(anyhow::Error::msg)
+            .and_then(|c| c.try_deserialize().map_err(anyhow::Error::msg))?,
+    );
+
+    Ok(())
 }

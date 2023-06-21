@@ -15,7 +15,7 @@ const SECRET_KEY_LENGTH: usize = 32;
 
 /// Issues a new `Passeto` token considering a given `user`'s id as a custom claim.
 pub fn issue_token(user_id: i32) -> anyhow::Result<String> {
-    let token_settings = crate::settings::load_app_settings()?.token;
+    let token_settings = &crate::settings::AppSettings::get().token;
     let sk = secret_key_checked_build(token_settings.secret_key.as_bytes())?;
     let mut claims = Claims::new()?;
     claims.non_expiring(); // NOTE: Temporal setting. Make the tokens expiring-tokens
@@ -36,7 +36,7 @@ pub fn issue_token(user_id: i32) -> anyhow::Result<String> {
 /// Verifies a given `Paseto` token and returns its optional and validated [`Claims`]
 /// if it was successfully verified.
 pub fn verify_token(token: String) -> anyhow::Result<Option<Claims>> {
-    let token_settings = crate::settings::load_app_settings()?.token;
+    let token_settings = &crate::settings::AppSettings::get().token;
     let sk = secret_key_checked_build(token_settings.secret_key.as_bytes())?;
     let mut validator_rules = ClaimsValidationRules::new();
     validator_rules.allow_non_expiring();
@@ -57,7 +57,7 @@ fn secret_key_checked_build(sk: &[u8]) -> anyhow::Result<SymmetricKey<V4>> {
     match sk.len() {
         SECRET_KEY_LENGTH => Ok(SymmetricKey::<V4>::from(sk)?),
         _ => Err(anyhow::Error::msg(
-            "invalid secret-key. length must be 256 bits or 32 bytes",
+            "invalid secret-key. length must be of 32 bytes",
         )),
     }
 }

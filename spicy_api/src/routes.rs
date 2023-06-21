@@ -1,11 +1,9 @@
-use actix_web::{HttpResponse, Responder};
-
 mod auditing;
-pub mod sessions;
+pub mod health_check;
 mod recipes;
+pub mod sessions;
 mod users;
 
-use serde_json::json;
 use users::{users_likes::*, users_recipes::*, *};
 
 use crate::middleware::token_validator;
@@ -15,26 +13,18 @@ macro_rules! route_config {
         name=$name:ident,
         scope_pfx=$pfx:expr,
         services=[ $( $srv:ident ),+ ]
-        $( ,configs=[ $( $conf:ident ),* ] )?
-        $( ,middleware=[ $( $mw:ident ),* ] )?
+        $( ,configs=[ $( $conf:ident ),+ ] )?
+        $( ,middleware=[ $( $mw:ident ),+ ] )?
     } => {
         pub fn $name(cfg: &mut ::actix_web::web::ServiceConfig) {
             cfg.service(
                 ::actix_web::web::scope($pfx)
                     $( .service($srv) )+
-                    $( $( .configure($conf) )* )?
-                    $( $( .wrap(::actix_web_lab::middleware::from_fn($mw)) )* )?
+                    $( $( .configure($conf) )+ )?
+                    $( $( .wrap(::actix_web_lab::middleware::from_fn($mw)) )+ )?
             );
         }
     };
-}
-
-#[actix_web::get("/health_check")]
-async fn health_check() -> impl Responder {
-    HttpResponse::Ok().json(json!({
-        "status": "success",
-        "msg": "Spicy's API Running"
-    }))
 }
 
 route_config! {

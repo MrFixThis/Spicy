@@ -8,6 +8,7 @@ pub mod user_payload;
 pub struct ErrorResponse {
     status_code: u16,
     msg: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     err: Option<String>,
 }
 

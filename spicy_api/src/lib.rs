@@ -5,9 +5,8 @@ mod routes;
 mod settings;
 mod utils;
 
-use actix_web::{dev, web::Data, App, HttpServer};
-use service::sea_orm::{ConnectOptions, Database, DatabaseConnection};
-use std::env;
+use actix_web::{dev, guard, web::Data, App, HttpServer};
+use settings::AppSettings;
 
 const STATIC_DATA_PATH: &str = "static_data";
 
@@ -18,40 +17,33 @@ const STATIC_DATA_PATH: &str = "static_data";
 /// * [service::sea_orm::DatabaseConnection] configurations.
 pub async fn setup_app() -> anyhow::Result<dev::Server> {
     dotenvy::dotenv()?;
-    let setts = settings::load_app_settings()?;
+    settings::parse_app_settings()?;
 
-    let db = setup_conn().await?;
-    entity::setup_db_schema(&db).await?;
+    let settings = AppSettings::get();
+    let db = entity::setup_database(settings.datasource.clone().into_raw_format()).await?;
 
     let server = HttpServer::new(move || {
         let cors = actix_cors::Cors::default() // HACK: Improve CORS constraints
             .allow_any_header()
             .allow_any_method()
-            // .allowed_origin(&setts.frontend_url)
-            .allow_any_origin() //NOTE: while testing
-            .max_age(3000);
+            .allowed_origin(&settings.frontend_url)
+            .max_age(300);
+
+        let static_content = actix_files::Files::new("/static/", STATIC_DATA_PATH)
+            .guard(guard::Header("Host", &settings.frontend_url));
 
         App::new()
             .wrap(cors)
+            .service(static_content)
             .service(routes::sessions::login)
             .service(routes::sessions::register_user)
-            .service(routes::health_check)
+            .service(routes::health_check::check_availability)
             .configure(routes::users_config)
             .app_data(Data::new(db.clone()))
-            .service(actix_files::Files::new("/static/", STATIC_DATA_PATH).show_files_listing())
     })
-    .bind(setts.server.socket_address())
+    .bind(settings.server.socket_address())
     .map_err(anyhow::Error::msg)?
     .run();
 
     Ok(server)
-}
-
-/// Establishes the connection to the data source.
-async fn setup_conn() -> anyhow::Result<DatabaseConnection> {
-    let mut opt = ConnectOptions::new(env::var("DATABASE_URL")?);
-    opt.sqlx_logging(false);
-    // .. further configs
-
-    Database::connect(opt).await.map_err(anyhow::Error::msg)
 }

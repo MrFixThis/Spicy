@@ -14,6 +14,12 @@ members = ["persistence/*"]
 [workspace.package]
 authors = ["MrFixThis <mrfixthis55@gmail.com>"]
 
+[workspace.dependencies]
+serde = { version = "1.0.163", features = ["derive"] }
+serde_json = "1.0.96"
+anyhow = "1.0.71"
+pretty_assertions = "1.3.0"
+
 [dependencies]
 actix-web = "4.3.1"
 actix-multipart = { version = "0.6.0", features = ["actix-multipart-derive"] }
@@ -39,8 +45,13 @@ migration = { path = "persistence/migration" }
 [dev-dependencies]
 pretty_assertions.workspace = true
 
-[workspace.dependencies]
-serde = { version = "1.0.163", features = ["derive"] }
-serde_json = "1.0.96"
-anyhow = "1.0.71"
-pretty_assertions = "1.3.0"
+# [features]
+# "sqlx-mysql" = [
+#     "sea-orm-migration/sqlx-mysql"
+# ]
+# "sqlx-postgres" = [
+#     "sea-orm-migration/sqlx-postgres"
+# ]
+# "sqlx-sqlite" = [
+#     "sea-orm-migration/sqlx-sqlite"
+# ]
