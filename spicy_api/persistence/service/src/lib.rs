@@ -1,16 +1,12 @@
-mod auditing;
 mod likes;
 mod recipe;
 mod recipe_image;
-mod role;
 mod user;
 mod user_profile;
 
-pub use auditing::AuditingService;
 pub use likes::LikesService;
 pub use recipe::RecipeService;
 pub use recipe_image::ImageRecipeService;
-pub use role::RoleService;
 pub use sea_orm;
 use sea_orm::{sea_query::IntoCondition, *};
 pub use user::UserService;
@@ -58,30 +54,20 @@ where
     E: EntityTrait,
     E::Model: IntoActiveModel<A>,
     A: ActiveModelTrait + ActiveModelBehavior<Entity = E> + Send + 'static,
+    A: TryIntoModel<E::Model>,
     Pk: Into<<E::PrimaryKey as PrimaryKeyTrait>::ValueType> + Send + 'static,
 {
-    async fn create(db: &DbConn, from_mod: A) -> Result<E::Model, DbErr> {
-        from_mod.insert(db).await
+    async fn create(db: &DbConn, act_mod: A) -> Result<E::Model, DbErr> {
+        act_mod.insert(db).await
     }
 
-    async fn update_by<V>(
-        db: &DbConn,
-        col: E::Column,
-        col_val: V,
-        from_mod: E::Model,
-    ) -> Result<A, DbErr>
-    where
-        V: Into<Value> + Send,
-    {
-        let mut ent = from_mod.into_active_model();
-        ent.set(col, col_val.into());
-        ent.reset_all().save(db).await
+    async fn update(db: &DbConn, act_mod: A) -> Result<E::Model, DbErr> {
+        act_mod.save(db).await.and_then(|m| m.try_into_model())
     }
 
     async fn delete_by_pk(db: &DbConn, pk: Pk) -> Result<DeleteResult, DbErr> {
         E::delete_by_id(pk).exec(db).await
     }
-
     async fn delete_all(db: &DbConn) -> Result<DeleteResult, DbErr> {
         E::delete_many().exec(db).await
     }

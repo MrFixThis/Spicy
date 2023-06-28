@@ -4,12 +4,12 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, Serialize, Deserialize)]
 #[sea_orm(table_name = "recipe")]
 pub struct Model {
-    #[sea_orm(primary_key)]
+    #[sea_orm(primary_key, auto_increment = false)]
     #[serde(default)]
-    pub id: i32,
+    pub id: Uuid,
+    pub user_id: Uuid,
     #[sea_orm(column_type = "String(Some(255))")]
     pub title: String,
-    pub date_created: Date,
     #[sea_orm(column_type = "Text")]
     pub description: String,
     #[sea_orm(column_type = "Text")]
@@ -17,7 +17,8 @@ pub struct Model {
     pub cooking_time: Time,
     #[sea_orm(default_value = true)]
     pub is_visible: bool,
-    pub user_id: i32,
+    pub created_at: DateTimeUtc,
+    pub updated_at: Option<DateTimeUtc>,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter, DeriveRelation)]

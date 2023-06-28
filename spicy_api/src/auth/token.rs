@@ -1,6 +1,7 @@
 use core::convert::TryFrom;
 use pasetors::{
     claims::{Claims, ClaimsValidationRules},
+    errors,
     keys::SymmetricKey,
     local,
     token::UntrustedToken,
@@ -9,55 +10,100 @@ use pasetors::{
 };
 use uuid::Uuid;
 
-/// The length of the `secret key` required to encrypt/decrypt the tokens for the **local** purpose.
-/// see [Algorithm Lucidity](https://github.com/paseto-standard/paseto-spec/blob/master/docs/02-Implementation-Guide/03-Algorithm-Lucidity.md).
-const SECRET_KEY_LENGTH: usize = 32;
+/// The **issuer** of the `Paseto` tokens.
+const TOKEN_ISSUER: &str = "spicy.com";
 
-/// Issues a new `Passeto` token considering a given `user`'s id as a custom claim.
-pub fn issue_token(user_id: i32) -> anyhow::Result<String> {
-    let token_settings = &crate::settings::AppSettings::get().token;
-    let sk = secret_key_checked_build(token_settings.secret_key.as_bytes())?;
+/// The **subject** for the `refresh` token.
+const REFRESH_SUBJECT: &str = "spicy_refresh_token";
+
+/// The **subject** for the `access` token.
+const ACCESS_SUBJECT: &str = "spicy_access_token";
+
+/// The kind of a `Paseto` token being **issued** or **verified**.
+///
+/// In the case in which a new token needs to be issued, the value attached to the variant refers
+/// to the user's [`Uuid`] in string format.
+///
+/// On the other hand, in the case in which a token `verification` process is required,
+/// the value attached to the variant refers to the token being *verified*.
+pub enum TokenKind {
+    Access(String),
+    Refresh(String),
+}
+
+/// Issues a new `Paseto` token considering a given `user`'s id as a custom claim.
+pub fn issue_token(tk: TokenKind) -> Result<String, errors::Error> {
+    let app_settings = &crate::settings::AppSettings::get();
     let mut claims = Claims::new()?;
-    claims.non_expiring(); // NOTE: Temporal setting. Make the tokens expiring-tokens
-    claims.token_identifier(&Uuid::new_v4().to_string())?;
+    let (user_id, topts) = match tk {
+        TokenKind::Refresh(id) => {
+            claims.subject(REFRESH_SUBJECT)?;
+            claims.token_identifier(&Uuid::new_v4().to_string())?; // HACK: For redis blacklisting
+            (id, &app_settings.token[1])
+        }
+        TokenKind::Access(id) => {
+            claims.subject(ACCESS_SUBJECT)?;
+            (id, &app_settings.token[0])
+        }
+    };
+
     claims.add_additional("user_id", user_id)?;
-    // let exp_time = chrono::Local::now() + chrono::Duration::minutes(token_settings.exp_time);
-    // claims.expiration(&exp_time.to_rfc3339())?;
+    claims.issuer(TOKEN_ISSUER)?;
+    claims.audience(&app_settings.frontend_url)?;
+    claims.expiration(
+        &(chrono::Local::now() + chrono::Duration::minutes(topts.exp_time)).to_rfc3339(),
+    )?;
 
     local::encrypt(
-        &sk,
+        &SymmetricKey::<V4>::from(topts.secret_key.as_bytes())?,
         &claims,
         None,
-        Some(token_settings.implicit_assert.as_bytes()),
+        Some(topts.implicit_assert.as_bytes()),
     )
-    .map_err(|e| anyhow::Error::msg(format!("TokenIssue: {e}")))
 }
 
-/// Verifies a given `Paseto` token and returns its optional and validated [`Claims`]
-/// if it was successfully verified.
-pub fn verify_token(token: String) -> anyhow::Result<Option<Claims>> {
-    let token_settings = &crate::settings::AppSettings::get().token;
-    let sk = secret_key_checked_build(token_settings.secret_key.as_bytes())?;
-    let mut validator_rules = ClaimsValidationRules::new();
-    validator_rules.allow_non_expiring();
+/// Verifies a given `Paseto` token and returns its *identifier* (if the token being verified is a
+/// **refresh** token) and the custom claim ***user_id*** if it was successfully validated.
+pub fn verify_token(tk: TokenKind) -> Result<(Option<Uuid>, Uuid), errors::Error> {
+    let app_settings = &crate::settings::AppSettings::get();
+    let mut validation_rules = ClaimsValidationRules::new();
+    let (token, topts) = match tk {
+        TokenKind::Refresh(token) => {
+            validation_rules.validate_subject_with(REFRESH_SUBJECT);
+            (token, &app_settings.token[1])
+        }
+        TokenKind::Access(token) => {
+            validation_rules.validate_subject_with(ACCESS_SUBJECT);
+            (token, &app_settings.token[0])
+        }
+    };
+    validation_rules.validate_issuer_with(TOKEN_ISSUER);
+    validation_rules.validate_audience_with(&app_settings.frontend_url);
 
     let untrusted_token = UntrustedToken::<Local, V4>::try_from(&token)?;
-    local::decrypt(
-        &sk,
+    let trusted_token = local::decrypt(
+        &SymmetricKey::<V4>::from(topts.secret_key.as_bytes())?,
         &untrusted_token,
-        &validator_rules,
+        &validation_rules,
         None,
-        Some(token_settings.implicit_assert.as_bytes()),
-    )
-    .map(|t| t.payload_claims().cloned())
-    .map_err(|e| anyhow::Error::msg(format!("TokenVerification: {e}")))
-}
+        Some(topts.implicit_assert.as_bytes()),
+    )?;
+    let claims = trusted_token.payload_claims().unwrap();
 
-fn secret_key_checked_build(sk: &[u8]) -> anyhow::Result<SymmetricKey<V4>> {
-    match sk.len() {
-        SECRET_KEY_LENGTH => Ok(SymmetricKey::<V4>::from(sk)?),
-        _ => Err(anyhow::Error::msg(
-            "invalid secret-key. length must be of 32 bytes",
-        )),
+    match (claims.get_claim("jti"), claims.get_claim("user_id")) {
+        (Some(ti), Some(ui)) => {
+            match (
+                Uuid::try_parse(&ti.to_string()),
+                Uuid::try_parse(&ui.to_string()),
+            ) {
+                (Ok(ti), Ok(ui)) => Ok((Some(ti), ui)),
+                _ => Err(errors::Error::InvalidClaim),
+            }
+        }
+        (None, Some(ui)) => match Uuid::try_parse(ui.as_str().unwrap()) {
+            Ok(ui) => Ok((None, ui)),
+            _ => Err(errors::Error::InvalidClaim),
+        },
+        _ => Err(errors::Error::TokenValidation),
     }
 }

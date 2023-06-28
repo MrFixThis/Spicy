@@ -11,7 +11,7 @@ pk_ty!(recipe::PrimaryKey);
 impl QueryRepository<Recipe, PrimaryKey> for RecipeService {
     async fn find_all(db: &DbConn) -> Result<Vec<recipe::Model>, DbErr> {
         Recipe::find()
-            .order_by_asc(recipe::Column::DateCreated)
+            .order_by_asc(recipe::Column::CreatedAt)
             .all(db)
             .await
     }

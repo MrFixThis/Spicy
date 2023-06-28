@@ -11,10 +11,10 @@ pub enum PrimaryKey {
 }
 
 impl PrimaryKeyTrait for PrimaryKey {
-    type ValueType = i32;
+    type ValueType = Uuid;
 
     fn auto_increment() -> bool {
-        true
+        false
     }
 }
 
@@ -25,9 +25,11 @@ pub enum Column {
     Password,
     Name,
     Surname,
-    DateJoined,
+    IsAdmin,
     IsActive,
     Thumbnail,
+    CreatedAt,
+    UpdatedAt,
 }
 
 impl ColumnTrait for Column {
@@ -35,14 +37,16 @@ impl ColumnTrait for Column {
 
     fn def(&self) -> ColumnDef {
         match self {
-            Column::Id => ColumnType::Integer.def(),
+            Column::Id => ColumnType::Uuid.def(),
             Column::Email => ColumnType::String(Some(255)).def().indexed().unique(),
             Column::Password => ColumnType::Text.def().indexed(),
             Column::Name => ColumnType::String(Some(60)).def(),
             Column::Surname => ColumnType::String(Some(60)).def(),
-            Column::DateJoined => ColumnType::Date.def(),
+            Column::IsAdmin => ColumnType::Boolean.def(),
             Column::IsActive => ColumnType::Boolean.def().indexed().default_value(true),
             Column::Thumbnail => ColumnType::Text.def().nullable(),
+            Column::CreatedAt => ColumnType::Timestamp.def(),
+            Column::UpdatedAt => ColumnType::Timestamp.def().nullable(),
         }
     }
 }
@@ -50,15 +54,17 @@ impl ColumnTrait for Column {
 #[derive(Debug, Clone, PartialEq, Eq, DeriveModel, DeriveActiveModel, Serialize, Deserialize)]
 pub struct Model {
     #[serde(default)]
-    pub id: i32,
+    pub id: Uuid,
     pub email: String,
     #[serde(skip_serializing)]
     pub password: String,
     pub name: String,
     pub surname: String,
-    pub date_joined: Date,
+    pub is_admin: bool,
     pub is_active: bool,
     pub thumbnail: Option<String>,
+    pub created_at: DateTimeUtc,
+    pub updated_at: Option<DateTimeUtc>,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter, DeriveRelation)]
@@ -69,8 +75,6 @@ pub enum Relation {
     Recipe,
     #[sea_orm(has_many = "super::likes::Entity")]
     Likes,
-    #[sea_orm(has_many = "super::auditing::Entity")]
-    Auditing,
 }
 
 impl Related<super::user_profile::Entity> for Entity {
@@ -85,25 +89,9 @@ impl Related<super::recipe::Entity> for Entity {
     }
 }
 
-impl Related<super::role::Entity> for Entity {
-    fn to() -> RelationDef {
-        super::user_role::Relation::Role.def()
-    }
-
-    fn via() -> Option<RelationDef> {
-        Some(super::user_role::Relation::Role.def().rev())
-    }
-}
-
 impl Related<super::likes::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Likes.def()
-    }
-}
-
-impl Related<super::auditing::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Auditing.def()
     }
 }
 

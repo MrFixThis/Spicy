@@ -1,106 +1,124 @@
 [
     [
         {
-            "id": 1,
+            "id": "d6a4155c-33a2-487b-a80d-6d9468e7141e",
             "email": "user1@example.com",
             "password": "password1",
             "name": "John",
             "surname": "Doe",
-            "date_joined": "2023-01-01",
+            "is_admin": false,
             "is_active": true,
-            "thumbnail": "thumbnail1"
+            "thumbnail": "thumbnail1",
+            "created_at": "2023-06-21 12:34:56Z",
+            "updated_at": null
         }
     ],
     [
         {
-            "id": 2,
+            "id": "7f8e51cd-26e1-4f55-9eab-d7a9dd5b9d24",
             "email": "user2@example.com",
             "password": "password2",
             "name": "Jane",
             "surname": "Smith",
-            "date_joined": "2023-01-02",
+            "is_admin": false,
             "is_active": true,
-            "thumbnail": "thumbnail2"
+            "thumbnail": "thumbnail2",
+            "created_at": "2023-06-21 12:34:57Z",
+            "updated_at": null
         }
     ],
     [
         {
-            "id": 1,
+            "id": "d6a4155c-33a2-487b-a80d-6d9468e7141e",
             "email": "user1@example.com",
             "password": "password1",
             "name": "John",
             "surname": "Doe",
-            "date_joined": "2023-01-01",
+            "is_admin": false,
             "is_active": true,
-            "thumbnail": "thumbnail1"
+            "thumbnail": "thumbnail1",
+            "created_at": "2023-06-21 12:34:56Z",
+            "updated_at": null
         },
         {
-            "id": 2,
+            "id": "7f8e51cd-26e1-4f55-9eab-d7a9dd5b9d24",
             "email": "user2@example.com",
             "password": "password2",
             "name": "Jane",
             "surname": "Smith",
-            "date_joined": "2023-01-02",
+            "is_admin": false,
             "is_active": true,
-            "thumbnail": "thumbnail2"
+            "thumbnail": "thumbnail2",
+            "created_at": "2023-06-21 12:34:57Z",
+            "updated_at": null
         }
     ],
     [
         {
-            "id": 1,
+            "id": "d6a4155c-33a2-487b-a80d-6d9468e7141e",
             "email": "user1@example.com",
             "password": "password1",
             "name": "John",
             "surname": "Doe",
-            "date_joined": "2023-01-01",
+            "is_admin": false,
             "is_active": false,
-            "thumbnail": "thumbnail1"
+            "thumbnail": "thumbnail1",
+            "created_at": "2023-06-21 12:34:56Z",
+            "updated_at": null
         }
     ],
     [
         {
-            "id": 3,
+            "id": "9861c2b1-71f1-4c68-bd03-59e0d8c0e369",
             "email": "user3@example.com",
             "password": "password3",
             "name": "Bob",
             "surname": "Williams",
-            "date_joined": "2023-01-03",
+            "is_admin": true,
             "is_active": true,
-            "thumbnail": "thumbnail3"
+            "thumbnail": "thumbnail3",
+            "created_at": "2023-06-21 12:34:59Z",
+            "updated_at": "2023-06-21 12:55:01Z"
         }
     ],
     [
         {
-            "id": 4,
+            "id": "d6a4155c-33a2-487b-a80d-6d9468e7141e",
             "email": "user5@example.com",
             "password": "password4",
             "name": "Emily",
             "surname": "Brown",
-            "date_joined": "2023-01-04",
+            "is_admin": false,
             "is_active": true,
-            "thumbnail": "thumbnail4"
+            "thumbnail": "thumbnail4",
+            "created_at": "2023-06-21 12:40:00Z",
+            "updated_at": null
         }
     ],
     [
         {
-            "id": 3,
+            "id": "9861c2b1-71f1-4c68-bd03-59e0d8c0e369",
             "email": "user3@example.com",
             "password": "password3",
             "name": "Bob",
             "surname": "Williams",
-            "date_joined": "2023-01-03",
+            "is_admin": false,
             "is_active": true,
-            "thumbnail": "thumbnail3"
+            "thumbnail": "thumbnail3",
+            "created_at": "2023-06-21 12:34:59Z",
+            "updated_at": null
         },
         {
-            "id": 5,
+            "id": "d7e05234-3db0-4eac-9c19-8341e61a6a13",
             "email": "user5@example.com",
             "password": "password5",
             "name": "Dylan",
             "surname": "Mayers",
-            "date_joined": "2023-01-05",
+            "is_admin": false,
             "is_active": true,
-            "thumbnail": "thumbnail5"
+            "thumbnail": "thumbnail5",
+            "created_at": "2023-06-21 12:40:01Z",
+            "updated_at": null
         }
     ]
 ]

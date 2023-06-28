@@ -1,126 +1,139 @@
 [
     [
         {
-            "id": 1,
+            "id": "f67e7a21-c2d0-4aef-9e1d-8e7e1aa6f4a7",
+            "user_id": "d6a4155c-33a2-487b-a80d-6d9468e7141e",
             "title": "Pasta Carbonara",
-            "date_created": "2023-01-01",
             "description": "Classic Italian pasta dish",
             "preparation_steps": "1. Cook pasta. 2. Fry bacon. 3. Beat eggs and mix with cheese. 4. Combine pasta, bacon, and egg mixture. 5. Serve hot.",
             "cooking_time": "00:30:00",
             "is_visible": true,
-            "user_id": 1
+            "created_at": "2023-06-21 12:34:56Z",
+            "updated_at": null
         }
     ],
     [
         {
-            "id": 2,
+            "id": "1b678ae7-1e12-4e9e-92bc-45a080f2e2e1",
+            "user_id": "7f8e51cd-26e1-4f55-9eab-d7a9dd5b9d24",
             "title": "Chicken Curry",
-            "date_created": "2023-01-02",
             "description": "Spicy and flavorful chicken curry",
             "preparation_steps": "1. Heat oil and sauté onions. 2. Add spices and chicken. 3. Cook until chicken is done. 4. Garnish with cilantro. 5. Serve with rice.",
             "cooking_time": "01:00:00",
             "is_visible": false,
-            "user_id": 2
+            "created_at": "2023-06-21 12:34:57Z",
+            "updated_at": null
         }
     ],
     [
         {
-            "id": 2,
+            "id": "1b678ae7-1e12-4e9e-92bc-45a080f2e2e1",
+            "user_id": "7f8e51cd-26e1-4f55-9eab-d7a9dd5b9d24",
             "title": "Chicken Curry",
-            "date_created": "2023-01-02",
             "description": "Spicy and flavorful chicken curry",
             "preparation_steps": "1. Heat oil and sauté onions. 2. Add spices and chicken. 3. Cook until chicken is done. 4. Garnish with cilantro. 5. Serve with rice.",
             "cooking_time": "01:00:00",
             "is_visible": false,
-            "user_id": 2
+            "created_at": "2023-06-21 12:34:57Z",
+            "updated_at": null
         },
         {
-            "id": 3,
+            "id": "e65e70e1-462d-4a6c-961a-4fcab6d82762",
+            "user_id": "d6a4155c-33a2-487b-a80d-6d9468e7141e",
             "title": "Chocolate Brownies",
-            "date_created": "2023-01-03",
             "description": "Rich and fudgy chocolate brownies",
             "preparation_steps": "1. Melt butter and chocolate. 2. Mix in sugar and eggs. 3. Add flour and mix well. 4. Bake in preheated oven. 5. Let cool and cut into squares.",
             "cooking_time": "00:45:00",
             "is_visible": true,
-            "user_id": 3
+            "created_at": "2023-06-21 12:34:58Z",
+            "updated_at": null
         }
     ],
     [
         {
-            "id": 3,
+            "id": "e65e70e1-462d-4a6c-961a-4fcab6d82762",
+            "user_id": "d6a4155c-33a2-487b-a80d-6d9468e7141e",
             "title": "Chocolate Brownies",
-            "date_created": "2023-01-03",
             "description": "Rich and fudgy chocolate brownies",
             "preparation_steps": "1. Melt butter and chocolate. 2. Mix in sugar and eggs. 3. Add flour and mix well. 4. Bake in preheated oven. 5. Let cool and cut into squares.",
             "cooking_time": "00:45:00",
             "is_visible": false,
-            "user_id": 3
+            "created_at": "2023-06-21 12:34:58Z",
+            "updated_at": null
         }
     ],
     [
         {
-            "id": 3,
-            "title": "Chocolate Brownies with Nuts",
-            "date_created": "2023-01-03",
-            "description": "Rich and fudgy chocolate brownies nuts",
-            "preparation_steps": "1. Melt butter and chocolate. 2. Mix in sugar and eggs. 3. Add flour and nut, then mix well. 4. Bake in preheated oven. 5. Let cool and cut into squares.",
+            "id": "e65e70e1-462d-4a6c-961a-4fcab6d82762",
+            "user_id": "d6a4155c-33a2-487b-a80d-6d9468e7141e",
+            "title": "Chocolate Brownies",
+            "description": "Rich and fudgy chocolate brownies",
+            "preparation_steps": "1. Melt butter and chocolate. 2. Mix in sugar and eggs. 3. Add flour and mix well. 4. Bake in preheated oven. 5. Let cool and cut into squares.",
             "cooking_time": "00:45:00",
             "is_visible": true,
-            "user_id": 3
+            "created_at": "2023-06-21 12:34:58Z",
+            "updated_at": "2023-06-21 12:40:00Z"
         }
     ],
     [
         {
-            "id": 4,
+            "id": "7c80f0a2-93c6-4c84-b7e1-9c4f6ef7c4e5",
+            "user_id": "7f8e51cd-26e1-4f55-9eab-d7a9dd5b9d24",
             "title": "Greek Salad",
-            "date_created": "2023-01-04",
             "description": "Refreshing and healthy salad",
             "preparation_steps": "1. Chop tomatoes, cucumbers, and onions. 2. Add olives and feta cheese. 3. Drizzle with olive oil and lemon juice. 4. Season with salt and pepper. 5. Toss and serve.",
             "cooking_time": "00:15:00",
             "is_visible": true,
-            "user_id": 4
+            "created_at": "2023-06-21 12:34:59Z",
+            "updated_at": null
         }
     ],
     [
         {
-            "id": 5,
+            "id": "d849bdee-875e-4ad4-a28c-06e90c7e0a87",
+            "user_id": "d6a4155c-33a2-487b-a80d-6d9468e7141e",
             "title": "Beef Stir-Fry",
-            "date_created": "2023-01-05",
             "description": "Quick and delicious beef stir-fry",
             "preparation_steps": "1. Marinate beef in soy sauce and ginger. 2. Heat oil and stir-fry beef. 3. Add vegetables and cook until tender. 4. Season with salt and pepper. 5. Serve with rice or noodles.",
             "cooking_time": "00:25:00",
             "is_visible": false,
-            "user_id": 5
+            "created_at": "2023-06-21 12:35:00Z",
+            "updated_at": null
         },
         {
+            "id": "7c80f0a2-93c6-4c84-b7e1-9c4f6ef7c4e5",
+            "user_id": "7f8e51cd-26e1-4f55-9eab-d7a9dd5b9d24",
             "title": "Chicken Tikka Masala",
-            "date_created": "2023-02-15",
             "description": "Spicy and creamy Indian chicken curry",
             "preparation_steps": "1. Marinate chicken with yogurt and spices. 2. Grill or cook chicken until done. 3. Prepare the tomato-based sauce. 4. Add cooked chicken to the sauce. 5. Simmer for a few minutes. 6. Serve with rice or naan bread.",
             "cooking_time": "01:15:00",
             "is_visible": true,
-            "user_id": 6
+            "created_at": "2023-06-21 12:35:01Z",
+            "updated_at": null
         }
     ],
     [
         {
-            "id": 5,
+            "id": "d849bdee-875e-4ad4-a28c-06e90c7e0a87",
+            "user_id": "d6a4155c-33a2-487b-a80d-6d9468e7141e",
             "title": "Beef Stir-Fry",
-            "date_created": "2023-01-05",
             "description": "Quick and delicious beef stir-fry",
             "preparation_steps": "1. Marinate beef in soy sauce and ginger. 2. Heat oil and stir-fry beef. 3. Add vegetables and cook until tender. 4. Season with salt and pepper. 5. Serve with rice or noodles.",
             "cooking_time": "00:25:00",
             "is_visible": false,
-            "user_id": 5
+            "created_at": "2023-06-21 12:35:00Z",
+            "updated_at": null
         },
         {
+            "id": "7c80f0a2-93c6-4c84-b7e1-9c4f6ef7c4e5",
+            "user_id": "7f8e51cd-26e1-4f55-9eab-d7a9dd5b9d24",
             "title": "Chicken Tikka Masala",
-            "date_created": "2023-02-15",
             "description": "Spicy and creamy Indian chicken curry",
             "preparation_steps": "1. Marinate chicken with yogurt and spices. 2. Grill or cook chicken until done. 3. Prepare the tomato-based sauce. 4. Add cooked chicken to the sauce. 5. Simmer for a few minutes. 6. Serve with rice or naan bread.",
             "cooking_time": "01:15:00",
             "is_visible": true,
-            "user_id": 6
+            "created_at": "2023-06-21 12:35:01Z",
+            "updated_at": null
         }
     ]
 ]

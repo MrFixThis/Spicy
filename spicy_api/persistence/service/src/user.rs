@@ -1,6 +1,6 @@
 use crate::{pk_ty, MutationRepository, QueryRepository};
+use ::entity::{prelude::User, recipe, user};
 use entity::likes;
-use ::entity::{prelude::User, user, recipe};
 use sea_orm::{ColumnTrait, Condition, DbConn, DbErr, EntityTrait, QueryFilter, QueryOrder};
 
 #[derive(Debug)]
@@ -9,9 +9,15 @@ pk_ty!(user::PrimaryKey);
 
 #[async_trait::async_trait]
 impl QueryRepository<User, PrimaryKey> for UserService {
+    async fn find_by_pk(db: &DbConn, pk: PrimaryKey) -> Result<Option<user::Model>, DbErr> {
+        User::find_by_id(pk)
+            .one(db)
+            .await
+    }
+
     async fn find_all(db: &DbConn) -> Result<Vec<user::Model>, DbErr> {
         User::find()
-            .order_by_asc(user::Column::DateJoined)
+            .order_by_asc(user::Column::CreatedAt)
             .all(db)
             .await
     }
@@ -34,7 +40,7 @@ impl UserService {
 
     pub async fn find_user_recipes(
         db: &DbConn,
-        pk: PrimaryKey
+        pk: PrimaryKey,
     ) -> Result<Vec<(user::Model, Option<recipe::Model>)>, DbErr> {
         User::find_by_id(pk)
             .find_also_linked(likes::Entity)

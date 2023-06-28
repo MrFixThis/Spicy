@@ -1,6 +1,6 @@
 use entity::{likes, prelude::Likes};
 
-use crate::{pk_ty, QueryRepository, MutationRepository};
+use crate::{pk_ty, MutationRepository, QueryRepository};
 
 #[derive(Debug)]
 pub struct LikesService;

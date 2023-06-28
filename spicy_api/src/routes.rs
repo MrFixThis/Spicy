@@ -1,12 +1,11 @@
-mod auditing;
 pub mod health_check;
 mod recipes;
-pub mod sessions;
+pub mod session;
 mod users;
 
 use users::{users_likes::*, users_recipes::*, *};
 
-use crate::middleware::token_validator;
+use crate::middleware::auth_validator;
 
 macro_rules! route_config {
     {
@@ -27,16 +26,26 @@ macro_rules! route_config {
     };
 }
 
+// Admin-level related services over users
+route_config! {
+    name = admins_config,
+    scope_pfx = "/admins",
+    services = [
+        fetch_all_users,
+        toggle_user_state
+    ],
+    middleware = [ auth_validator ]
+}
+
+// Individual users' related services
 route_config! {
     name = users_config,
     scope_pfx = "/users",
     services = [
         fetch_user,
-        fetch_all_users,
-        update_user,
-        delete_user,
-        fetch_user_recipes,
-        fetch_user_likes
+        update_user
+        // fetch_user_recipes,
+        // fetch_user_likes
     ],
-    middleware = [ token_validator ]
+    middleware = [ auth_validator ]
 }

@@ -1,0 +1,24 @@
+frontend_url = "-url-"
+
+[server]
+protocol = "http"
+host = "127.0.0.1"
+port = 9191
+
+[datasource]
+name = "spicy_db"
+host = "localhost"
+username = "root"
+password = "@BrysDB130502."
+
+# Access token
+[[token]]
+secret_key = "83b9278d70610925acdd61adca69331a"
+implicit_assert = "973e077ae7f82258f3b1a229ddb44ad0ad3d113385f58629624651d4e51198a7"
+exp_time = 60
+
+# Refresh token
+[[token]]
+secret_key = "23b957751043d2509fbaee0c4e614cf5"
+implicit_assert = "45e5db2b91963345ad3d16e972f113da8405f08cee970f0d6317490c39831e75"
+exp_time = 180

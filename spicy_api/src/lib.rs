@@ -1,4 +1,5 @@
 mod auth;
+mod error;
 mod middleware;
 mod payload;
 mod routes;
@@ -35,8 +36,8 @@ pub async fn setup_app() -> anyhow::Result<dev::Server> {
         App::new()
             .wrap(cors)
             .service(static_content)
-            .service(routes::sessions::login)
-            .service(routes::sessions::register_user)
+            .service(routes::session::login)
+            .service(routes::session::register_user)
             .service(routes::health_check::check_availability)
             .configure(routes::users_config)
             .app_data(Data::new(db.clone()))

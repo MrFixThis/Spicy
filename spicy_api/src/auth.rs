@@ -3,6 +3,10 @@ pub mod token;
 
 #[cfg(test)]
 mod tests {
+    use uuid::Uuid;
+
+    use crate::settings;
+
     use super::password::*;
     use super::token::*;
 
@@ -25,17 +29,21 @@ mod tests {
 
     #[test]
     fn test_token_is_issued_and_verified_propertly() -> anyhow::Result<()> {
-        const USER_ID: i32 = 5;
-        let token = issue_token(USER_ID)?;
+        settings::parse_app_settings()?;
+        let user_id: Uuid = Uuid::new_v4();
+        let token = issue_token(TokenKind::Access(user_id.to_string()))?;
 
-        _ = verify_token(token)?;
+        _ = verify_token(TokenKind::Access(token))?;
 
         Ok(())
     }
 
     #[test]
     fn test_malformed_token_is_checked_and_warned() {
+        settings::parse_app_settings().unwrap();
         let token = "v5.local.malformed_token".to_owned();
-        assert!(verify_token(token).is_err());
+        assert!(verify_token(TokenKind::Access(token)).is_err());
     }
+
+    // NOTE: Add more tests realted with the refresh tokens
 }

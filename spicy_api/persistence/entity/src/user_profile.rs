@@ -7,7 +7,7 @@ pub struct Model {
     #[sea_orm(primary_key)]
     #[serde(default)]
     pub id: i32,
-    pub user_id: i32,
+    pub user_id: Uuid,
     #[sea_orm(column_type = "String(Some(255))", nullable)]
     pub phone_number: Option<String>,
     pub birth_date: Option<Date>,

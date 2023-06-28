@@ -7,9 +7,9 @@ pub struct Model {
     #[sea_orm(primary_key)]
     #[serde(default)]
     pub id: i32,
+    pub recipe_id: Uuid,
     #[sea_orm(column_type = "Text", unique)]
     pub path: String,
-    pub recipe_id: i32,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter, DeriveRelation)]

@@ -4,7 +4,7 @@ use serde_json::json;
 #[actix_web::get("/health_check")]
 pub async fn check_availability() -> impl Responder {
     HttpResponse::Ok().json(json!({
-        "status": "success",
+        "status": "Hot!",
         "msg": "Spicy's API Running"
     }))
 }

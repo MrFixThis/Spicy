@@ -15,18 +15,11 @@ where
         .into_connection())
 }
 
-pub fn _build_mock_db_from<F>(f: F) -> anyhow::Result<DatabaseConnection>
-where
-    F: FnOnce() -> anyhow::Result<DatabaseConnection>,
-{
-    f()
-}
-
 pub fn parse_query_result<M>(path: &str) -> anyhow::Result<Vec<Vec<M>>>
 where
     M: ModelTrait,
     for<'de> M: Deserialize<'de>,
 {
     let cont = fs::read_to_string(format!("testdata/{path}"))?;
-    Ok(serde_json::from_str(cont.as_str())?)
+    serde_json::from_str(cont.as_str()).map_err(anyhow::Error::msg)
 }

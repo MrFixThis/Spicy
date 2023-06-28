@@ -1,14 +1,11 @@
 use sea_orm::{ConnectOptions, ConnectionTrait, Database, DbConn, DbErr, Statement};
 
-pub mod auditing;
 pub mod likes;
 pub mod prelude;
 pub mod recipe;
 pub mod recipe_image;
-pub mod role;
 pub mod user;
 pub mod user_profile;
-pub mod user_role;
 
 macro_rules! tables {
     {
@@ -34,7 +31,7 @@ pub async fn setup_database(db_cred: (String, String)) -> Result<DbConn, DbErr> 
     let res = db
         .execute(Statement::from_string(
             db.get_database_backend(),
-            format!(r#"CREATE DATABASE IF NOT EXISTS "{}";"#, &db_cred.1),
+            format!(r"CREATE DATABASE IF NOT EXISTS {};", &db_cred.1),
         ))
         .await?;
 
@@ -48,12 +45,9 @@ pub async fn setup_database(db_cred: (String, String)) -> Result<DbConn, DbErr> 
             entities = [
                 user::Entity,
                 user_profile::Entity,
-                role::Entity,
-                user_role::Entity,
                 recipe::Entity,
                 recipe_image::Entity,
-                likes::Entity,
-                auditing::Entity
+                likes::Entity
             ]
         }
     }

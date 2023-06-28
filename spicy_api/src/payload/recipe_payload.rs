@@ -1,27 +1,28 @@
 use actix_multipart::form::{tempfile::TempFile, text::Text, MultipartForm};
 use entity::recipe;
 use service::sea_orm;
+use uuid::Uuid;
 
-use crate::utils::try_persist_file;
+use crate::utils::persist_file;
 
 #[derive(Debug, MultipartForm)]
 pub struct NewRecipe {
-    title: Text<String>,
-    description: Text<String>,
-    preparation_steps: Text<String>,
-    cooking_time: Text<String>,
-    recipe_images: Vec<TempFile>,
+    pub title: Text<String>,
+    pub description: Text<String>,
+    pub preparation_steps: Text<String>,
+    pub cooking_time: Text<String>,
+    pub recipe_images: Vec<TempFile>,
 }
 
 impl NewRecipe {
     pub async fn into_user_recipe(
         self,
-        user_id: i32,
+        user_id: &Uuid,
     ) -> (recipe::ActiveModel, Option<Vec<String>>) {
         let images = if !self.recipe_images.is_empty() {
             let mut paths: Vec<String> = Vec::with_capacity(self.recipe_images.len());
             for img in self.recipe_images {
-                if let Some(path) = try_persist_file("recipes/", img).await {
+                if let Some(path) = persist_file("recipes/", img).await {
                     paths.push(path)
                 }
             }
@@ -37,14 +38,15 @@ impl NewRecipe {
 
         (
             recipe::ActiveModel {
-                id: sea_orm::NotSet,
+                id: sea_orm::Set(Uuid::new_v4()),
+                user_id: sea_orm::Set(user_id.to_owned()),
                 title: sea_orm::Set(self.title.into_inner()),
-                date_created: sea_orm::Set(chrono::Local::now().date_naive()),
                 description: sea_orm::Set(self.description.into_inner()),
                 preparation_steps: sea_orm::Set(self.preparation_steps.into_inner()),
                 cooking_time,
-                is_visible: sea_orm::Set(true), // default
-                user_id: sea_orm::Set(user_id),
+                is_visible: sea_orm::Set(true),
+                created_at: sea_orm::Set(chrono::Utc::now()),
+                updated_at: sea_orm::Set(None),
             },
             images,
         )

@@ -6,8 +6,10 @@ use serde::{Deserialize, Serialize};
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
-    pub user_id: i32,
-    pub recipe_id: i32,
+    pub user_id: Uuid,
+    pub recipe_id: Uuid,
+    pub created_at: DateTimeUtc,
+    pub updated_at: Option<DateTimeUtc>,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter, DeriveRelation)]
@@ -31,10 +33,7 @@ impl Linked for Entity {
     type ToEntity = super::recipe::Entity;
 
     fn link(&self) -> Vec<sea_orm::LinkDef> {
-        vec![
-            Relation::User.def().rev(),
-            Relation::Recipe.def()
-        ]
+        vec![Relation::User.def().rev(), Relation::Recipe.def()]
     }
 }
 

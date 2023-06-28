@@ -8,10 +8,10 @@ static APP_SETTINGS: OnceLock<AppSettings> = OnceLock::new();
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct AppSettings {
+    pub frontend_url: String,
     pub server: Server,
     pub datasource: Datasource,
-    pub token: Token,
-    pub frontend_url: String,
+    pub token: [Token; 2],
 }
 
 impl AppSettings {
@@ -46,7 +46,13 @@ impl Datasource {
 
     pub fn into_raw_format(self) -> (String, String) {
         (
-            format!("{}://{}:{}@{}", Self::DB_BACKEND, self.username, self.password, self.host),
+            format!(
+                "{}://{}:{}@{}",
+                Self::DB_BACKEND,
+                self.username,
+                self.password,
+                self.host
+            ),
             self.name,
         )
     }
@@ -89,11 +95,17 @@ impl TryFrom<String> for Environment {
 impl Environment {
     pub fn settings_file_name(self) -> &'static str {
         match self {
-            Environment::Development => "dev-settings.yaml",
-            Environment::Production => "prod-settings.yaml",
+            Environment::Development => "dev-settings.toml",
+            Environment::Production => "prod-settings.toml",
         }
     }
 }
+
+/// The `base` settings file's name.
+///
+/// This file is meant to hold the `common` settings shared by the _development_ and _production_
+/// settings files.
+const BASE_SETTINGS_FILE: &str = "settings.toml";
 
 /// Parses the applications's `settings` based on the specified application's environment in
 /// the root ***.env*** file.
@@ -105,7 +117,7 @@ pub fn parse_app_settings() -> anyhow::Result<()> {
 
     _ = APP_SETTINGS.set(
         Config::builder()
-            .add_source(File::from(settings_dir.join("settings.yaml")))
+            .add_source(File::from(settings_dir.join(BASE_SETTINGS_FILE)))
             .add_source(File::from(settings_dir.join(app_env.settings_file_name())))
             .build()
             .map_err(anyhow::Error::msg)

@@ -1,0 +1,24 @@
+[server]
+protocol = "https"
+host = "-url-"
+port = 0
+
+[datasource]
+name = "spicy_db"
+host = "0.0.0.0"
+username = "usr_prod"
+password = "prod_db"
+
+# Access token
+[[token]]
+secret_key = "178c6407777fc4381a1fed6c7d0fd775"
+implicit_assert = "b2c6e47ff55b9dde17a0c804b88935d6d1fc52f2c089a04fc50d593a1ec55773"
+exp_time = 120
+
+# Refresh token
+[[token]]
+secret_key = "10a14cca63ef8cae150eee60ece4afb1"
+implicit_assert = "6ba81d142733f656a72d82d51221f289f78cb0f0369864a2f07856f8ef258b12"
+exp_time = 240
+
+frontend_url = "-url-"

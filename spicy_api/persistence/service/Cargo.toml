@@ -35,9 +35,5 @@ name = "user_profile_test"
 required-features = ["mock"]
 
 [[test]]
-name = "auditing_test"
-required-features = ["mock"]
-
-[[test]]
 name = "recipe_test"
 required-features = ["mock"]
